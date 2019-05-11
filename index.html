@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const BLOCK_SIZE = 512;
+    const INODE_SIZE = 64;
+    const NDIRECT = 12;
+
+    let data;
+    let size;
+    let nblocks;
+    let ninodes;
+
+
+    async function main(file) {
+      console.log(file);
+      data = await readFile(file);
+      console.log(data);
+      parseSuperblock();
+      for (let i = 1; i < ninodes; i++) parseInode(i);
+    }
+
+    function readFile(file) {
+      const fr = new FileReader();
+      return new Promise((resolve) => {
+        fr.onload = () => resolve(fr.result);
+        fr.readAsArrayBuffer(file);
+      });
+    }
+
+    function parseSuperblock() {
+      const superblock = new DataView(data, BLOCK_SIZE);
+      size = superblock.getInt32(0, true);
+      nblocks = superblock.getInt32(4, true);
+      ninodes = superblock.getInt32(8, true);
+    }
+
+    function parseInode(inum) {
+      const inode = new DataView(data, BLOCK_SIZE + inum * INODE_SIZE);
+      
+      const type = inode.getInt16(0, true);
+      if(type == 0) return;
+
+      const major = inode.getInt16(2, true);
+      const minor = inode.getInt16(4, true);
+      const nlink = inode.getInt16(6, true);
+      const size = inode.getInt32(8, true);
+
+      const numberOfAddresses = (size + BLOCK_SIZE - 1) / BLOCK_SIZE;
+      const addrs = new Uint32Array(inode.buffer, inode.byteOffset + 12, numberOfAddresses);
+      console.log(addrs);
+
+      
+      
+      // console.log(`type=${type}, nlink=${nlink}, size=${size}`);
+      getInodeAddresses(inode);
+      // unsigned int addrs[NDIRECT + 1];   // Data block addresses
+    }
+  </script>
+
+
+  <input type="file" onChange="main(this.files[0])" />
+</body>
+
+</html>
