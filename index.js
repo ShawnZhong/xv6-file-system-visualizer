@@ -10,7 +10,7 @@ async function main(file) {
     image = await loadImage(file);
 
     initBlocks();
-    renderBlocks();
+    renderGrid();
 
     initInodes();
     renderInodes();
@@ -45,10 +45,10 @@ function initBlocks() {
         blocks[i] = new DataBlock(i);
 }
 
-function renderBlocks() {
+function renderGrid() {
     blockContainerDOM.innerHTML = "";
     for (let i = 0; i < superBlock.nblocks; i++)
-        blocks[i].renderBlock();
+        blocks[i].renderGrid();
 }
 
 function initInodes() {
@@ -57,7 +57,7 @@ function initInodes() {
 
 function renderInodes() {
     inodeContainerDOM.innerHTML = "";
-    inodes.forEach(e => e.render());
+    inodes.forEach(e => e.renderGrid());
 }
 
 class Block {
@@ -86,7 +86,7 @@ class Block {
         }
     }
 
-    renderBlock(className = "unused-block", body = "") {
+    renderGrid(className = "unused-block", body = "") {
         let node = document.createElement("div");
         node.classList.add(className);
         node.innerHTML = body;
@@ -104,8 +104,8 @@ class SuperBlock extends Block {
         this.ninodeblocks = this.ninodes * Inode.SIZE / Block.SIZE;
     }
 
-    renderBlock() {
-        super.renderBlock("super-block");
+    renderGrid() {
+        super.renderGrid("super-block");
     }
 }
 
@@ -118,20 +118,20 @@ class BitmapBlock extends Block {
         return super.getData(2);
     }
 
-    renderBlock() {
-        super.renderBlock("bitmap-block");
+    renderGrid() {
+        super.renderGrid("bitmap-block");
     }
 }
 
 class InodeBlock extends Block {
-    renderBlock() {
-        super.renderBlock("inode-block");
+    renderGrid() {
+        super.renderGrid("inode-block");
     }
 }
 
 class DataBlock extends Block {
-    renderBlock() {
-        super.renderBlock("data-block");
+    renderGrid() {
+        super.renderGrid("data-block");
     }
 }
 
@@ -171,6 +171,7 @@ class Inode {
 
         this.indirectAddress = this.inode.getUint32(12 + Inode.NDIRECT * 4, true);
         this.dataAddresses = this.getAddresses();
+        this.typeName = this.getTypeName();
     }
 
     getAddresses() {
@@ -189,6 +190,11 @@ class Inode {
         }
 
         return addresses;
+    }
+
+    getTypeName() {
+        if (this.type > 3) return "Unknown";
+        return ["unused", "directory", "file", "device"][this.type];
     }
 
     getDirectoryDOM() {
@@ -214,22 +220,28 @@ class Inode {
     }
 
 
-    render() {
-        const titleDOM = document.createElement("div");
-        titleDOM.innerText = `inum = ${this.inum}; type = ${this.type}`;
+    renderGrid() {
+        // const titleDOM = document.createElement("div");
+        // titleDOM.innerText = `inum = ${this.inum}; type = ${this.type}`;
 
 
-        const containerDOM = document.createElement("div");
-        containerDOM.appendChild(titleDOM);
+        //     node.classList.add(className);
+        //
+        //
+        // const containerDOM = document.createElement("div");
+        // containerDOM.appendChild(titleDOM);
 
 
-        if (this.type === 1)
-            containerDOM.appendChild(this.getDirectoryDOM());
-        else if (this.type === 2)
-            containerDOM.appendChild(this.getFileDOM());
+        // if (this.type === 1)
+        //     containerDOM.appendChild(this.getDirectoryDOM());
+        // else if (this.type === 2)
+        //     containerDOM.appendChild(this.getFileDOM());
+
+        const node = document.createElement("div");
+        node.classList.add(this.typeName + "-inode");
 
 
-        inodeContainerDOM.appendChild(containerDOM);
+        inodeContainerDOM.appendChild(node);
 
 
     }

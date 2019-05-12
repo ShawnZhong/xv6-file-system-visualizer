@@ -1,16 +1,13 @@
-body {
-    font-family: sans-serif;
-}
-
-#block-container {
+.grid-container {
     display: flex;
     flex-wrap: wrap;
     text-align: center;
     color: white;
 }
 
-#block-container > div {
+.grid-container > div {
     width: 1.5rem;
+    line-height: 1;
     padding: 0.25rem 0;
     border: solid 1px white;
 }
@@ -28,7 +25,7 @@ body {
 }
 
 #block-container > .unused-block:before {
-    content: "U";
+    content: "-";
 }
 
 
@@ -39,7 +36,6 @@ body {
 #block-container > .inode-block:before {
     content: "I";
 }
-
 
 #block-container > .bitmap-block {
     background-color: #3f51b5;
@@ -54,5 +50,45 @@ body {
 }
 
 #block-container > .data-block:before {
+    content: "D";
+}
+
+#inode-container > .unused-inode {
+    background-color: #424242;
+}
+
+#inode-container > .unused-inode:before {
+    content: "-";
+}
+
+#inode-container > .directory-inode {
+    background-color: #3f51b5;
+}
+
+#inode-container > .directory-inode:before {
+    content: "D";
+}
+
+#inode-container > .file-inode {
+    background-color: #4caf50;
+}
+
+#inode-container > .file-inode:before {
+    content: "F";
+}
+
+#inode-container > .unknown-inode {
+    background-color: #4caf50;
+}
+
+#inode-container > .unknown-inode:before {
+    content: "U";
+}
+
+#inode-container > .device-inode {
+    background-color: #f44336;
+}
+
+#inode-container > .device-inode:before {
     content: "D";
 }
