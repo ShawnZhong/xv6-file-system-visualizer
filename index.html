@@ -2,72 +2,30 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <link href="index.css" rel="stylesheet">
+    <title>Document</title>
 </head>
 
 <body>
-  <script>
-    const BLOCK_SIZE = 512;
-    const INODE_SIZE = 64;
-    const NDIRECT = 12;
-
-    let data;
-    let size;
-    let nblocks;
-    let ninodes;
-
-
-    async function main(file) {
-      console.log(file);
-      data = await readFile(file);
-      console.log(data);
-      parseSuperblock();
-      for (let i = 1; i < ninodes; i++) parseInode(i);
-    }
-
-    function readFile(file) {
-      const fr = new FileReader();
-      return new Promise((resolve) => {
-        fr.onload = () => resolve(fr.result);
-        fr.readAsArrayBuffer(file);
-      });
-    }
-
-    function parseSuperblock() {
-      const superblock = new DataView(data, BLOCK_SIZE);
-      size = superblock.getInt32(0, true);
-      nblocks = superblock.getInt32(4, true);
-      ninodes = superblock.getInt32(8, true);
-    }
-
-    function parseInode(inum) {
-      const inode = new DataView(data, BLOCK_SIZE + inum * INODE_SIZE);
-      
-      const type = inode.getInt16(0, true);
-      if(type == 0) return;
-
-      const major = inode.getInt16(2, true);
-      const minor = inode.getInt16(4, true);
-      const nlink = inode.getInt16(6, true);
-      const size = inode.getInt32(8, true);
-
-      const numberOfAddresses = (size + BLOCK_SIZE - 1) / BLOCK_SIZE;
-      const addrs = new Uint32Array(inode.buffer, inode.byteOffset + 12, numberOfAddresses);
-      console.log(addrs);
-
-      
-      
-      // console.log(`type=${type}, nlink=${nlink}, size=${size}`);
-      getInodeAddresses(inode);
-      // unsigned int addrs[NDIRECT + 1];   // Data block addresses
-    }
-  </script>
-
-
-  <input type="file" onChange="main(this.files[0])" />
+<input onChange="main(this.files[0])" type="file"/>
+<div class="flex-container">
+    <div>1</div>
+    <div>2</div>
+    <div>3</div>
+    <div>4</div>
+    <div>5</div>
+    <div>6</div>
+    <div>7</div>
+    <div>8</div>
+    <div>9</div>
+    <div>10</div>
+    <div>11</div>
+    <div>12</div>
+</div>
+<script src="index.js"></script>
 </body>
 
 </html>
