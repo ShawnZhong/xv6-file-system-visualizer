@@ -7,7 +7,8 @@ let inodes;
 let blocks;
 
 async function main(file) {
-    image = await readFile(file);
+    image = await loadImage(file);
+
     initBlocks();
     renderBlocks();
 
@@ -15,12 +16,17 @@ async function main(file) {
     renderInodes();
 }
 
-function readFile(file) {
-    const fr = new FileReader();
-    return new Promise((resolve) => {
-        fr.onload = () => resolve(fr.result);
-        fr.readAsArrayBuffer(file);
-    });
+async function loadImage(file) {
+    if (file instanceof File) { // local file
+        const reader = new FileReader();
+        return await new Promise((resolve) => {
+            reader.onload = () => resolve(reader.result);
+            reader.readAsArrayBuffer(file);
+        });
+    } else { // remote file
+        const response = await fetch(file);
+        return await response.arrayBuffer();
+    }
 }
 
 function initBlocks() {
@@ -40,6 +46,7 @@ function initBlocks() {
 }
 
 function renderBlocks() {
+    blockContainerDOM.innerHTML = "";
     for (let i = 0; i < superBlock.nblocks; i++)
         blocks[i].renderBlock();
 }
@@ -49,6 +56,7 @@ function initInodes() {
 }
 
 function renderInodes() {
+    inodeContainerDOM.innerHTML = "";
     inodes.forEach(e => e.render());
 }
 

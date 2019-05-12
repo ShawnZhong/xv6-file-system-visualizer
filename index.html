@@ -14,7 +14,28 @@
 
 <body>
 
-<input onChange="main(this.files[0])" type="file"/>
+<form>
+    <fieldset>
+        <legend>Please select a xv6 image:</legend>
+        <input id="file-choice1" name="file"
+               onChange="main(this.value)" type="radio"
+               value="https://raw.githubusercontent.com/ShawnZhong/xv6-image-visualizer/master/images/good.img">
+        <label for="file-choice1">good.img</label>
+
+
+        <input id="file-choice2" name="file"
+               onChange="main(this.value)" type="radio"
+               value="https://raw.githubusercontent.com/ShawnZhong/xv6-image-visualizer/master/images/xv6-fs.img">
+        <label for="file-choice2">xv6-fs.img</label>
+
+        <input id="file-choice0" name="file" type="radio">
+        <label for="file-choice0">
+            <input id="file-upload" onChange="main(this.files[0])" type="file"/>
+        </label>
+
+    </fieldset>
+</form>
+
 
 <div id="block-view">
     <p>Blocks</p>
@@ -26,8 +47,12 @@
     <div id="inode-container"></div>
 </div>
 
-
 <script src="index.js"></script>
+
+<script>
+    document.getElementById('file-choice1').click();
+    document.getElementById('file-upload').onclick = () => document.getElementById('file-choice0').click();
+</script>
 </body>
 
 </html>
