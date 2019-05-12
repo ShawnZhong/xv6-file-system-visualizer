@@ -1,32 +1,45 @@
 class Block {
-    static SIZE = 512;
 
     constructor(blockNumber) {
         if (!blockNumber) return;
         this.blockNumber = blockNumber;
-        this.block = new DataView(image, Block.SIZE * blockNumber, Block.SIZE);
+        this.block = new DataView(image, Config.blockSize * blockNumber, Config.blockSize);
         this.uint8Array = new Uint8Array(this.block.buffer, this.block.byteOffset, this.block.byteLength);
+        this.uint32Array = new Uint32Array(this.block.buffer, this.block.byteOffset, this.block.byteLength);
+
+        this.isTextFile = false;
+        this.isDirectoryBlock = false;
     }
 
-    isAscii() {
+    isBlockAscii() {
         return this.uint8Array.every(e => e < 128);
     }
 
-    getData(radix = 16) {
-        switch (radix) {
-            case 0:
-                return new TextDecoder("utf-8").decode(this.block);
-            case 2:
-                return Array.from(this.uint8Array).map(e => e.toString(2).padStart(8, '0'));
-            case 16:
-                const uint32Array = new Uint32Array(this.block.buffer, this.block.byteOffset, this.block.byteLength);
-                return Array.from(uint32Array).map(e => e.toString(16).padStart(8, '0'));
-        }
+    getHexDataDOM() {
+        const node = document.createElement("pre");
+        node.innerHTML = Array.from(this.uint32Array)
+            .map(e => e.toString(16).padStart(8, '0'))
+            .join(", \t");
+        return node;
+    }
+
+    isHumanReadable() {
+        return this.isDirectoryBlock || this.isTextFile;
+    }
+
+    getHumanReadableDataDOM() {
+
+        const node = document.createElement("div");
+        if (this.isDirectoryBlock)
+            node.innerHTML = this.getEntires();
+        else if (this.isTextFile)
+            node.innerHTML = new TextDecoder("utf-8").decode(this.block);
+        return node;
     }
 
     getDetailDOM() {
         const node = document.createElement("div");
-        node.innerHTML = this.getData().toString();
+        node.appendChild(this.isHumanReadable() ? this.getHumanReadableDataDOM() : this.getHexDataDOM());
         return node;
     }
 
@@ -38,6 +51,22 @@ class Block {
         blockContainerDOM.appendChild(node);
     }
 
+    getEntires() {
+        let entries = {};
+        for (let i = 0; i < Config.blockSize / Config.entrySize; i++) {
+            const inum = this.block.getUint16(Config.entrySize * i, true);
+            if (inum === 0) continue;
+
+            const nameOffset = this.block.byteOffset + Config.entrySize * i + 2;
+            const nameArray = new Uint8Array(this.block.buffer, nameOffset, Config.entrySize - 2);
+            const name = new TextDecoder("utf-8").decode(nameArray);
+
+            entries[name] = inum;
+        }
+
+        return Object.entries(entries).map(([name, inum]) => `${name} => ${inum}`).join("<br>");
+    }
+
 }
 
 class SuperBlock extends Block {
@@ -47,7 +76,7 @@ class SuperBlock extends Block {
         this.size = this.block.getUint32(0, true);
         this.nblocks = this.block.getUint32(4, true);
         this.ninodes = this.block.getUint32(8, true);
-        this.ninodeblocks = this.ninodes * Inode.SIZE / Block.SIZE;
+        this.ninodeblocks = this.ninodes * Config.inodeSize / Config.blockSize;
     }
 
     renderGrid() {
@@ -60,8 +89,12 @@ class BitmapBlock extends Block {
         super(superBlock.ninodeblocks + 3);
     }
 
-    getData() {
-        return super.getData(2);
+    getHexDataDOM() {
+        const node = document.createElement("pre");
+        node.innerHTML = Array.from(this.uint8Array)
+            .map(e => e.toString(2).padStart(8, '0'))
+            .join(", \t");
+        return node;
     }
 
     renderGrid() {
@@ -78,25 +111,5 @@ class InodeBlock extends Block {
 class DataBlock extends Block {
     renderGrid() {
         super.renderGrid("data-block");
-    }
-}
-
-class DirectoryBlock extends DataBlock {
-    static ENTRY_SIZE = 16;
-
-    getEntries() {
-        let entries = {};
-        for (let i = 0; i < Block.SIZE / DirectoryBlock.ENTRY_SIZE; i++) {
-            const inum = this.block.getUint16(DirectoryBlock.ENTRY_SIZE * i, true);
-            if (inum === 0) continue;
-
-            const nameOffset = this.block.byteOffset + DirectoryBlock.ENTRY_SIZE * i + 2;
-            const nameArray = new Uint8Array(this.block.buffer, nameOffset, DirectoryBlock.ENTRY_SIZE - 2);
-            const name = new TextDecoder("utf-8").decode(nameArray);
-
-            entries[name] = inum;
-        }
-
-        return entries;
     }
 }

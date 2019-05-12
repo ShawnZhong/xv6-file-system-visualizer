@@ -1,5 +1,10 @@
+body {
+    font-family: sans-serif;
+}
+
 pre {
     white-space: pre-wrap;
+    tab-size: 12;
 }
 
 #body {

@@ -39,9 +39,9 @@ function initBlocks() {
     for (let i = 2; i < 2 + superBlock.ninodeblocks; i++)
         blocks[i] = new InodeBlock(i);
 
-    blocks[superBlock.ninodeblocks + 2] = new BitmapBlock();
+    blocks[superBlock.ninodeblocks + 3] = new BitmapBlock();
 
-    for (let i = superBlock.ninodeblocks + 3; i < superBlock.nblocks; i++)
+    for (let i = superBlock.ninodeblocks + 4; i < superBlock.nblocks; i++)
         blocks[i] = new DataBlock(i);
 }
 
