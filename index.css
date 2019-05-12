@@ -1,3 +1,25 @@
+pre {
+    white-space: pre-wrap;
+}
+
+#body {
+    display: flex;
+}
+
+#detail {
+    flex: 30%;
+}
+
+#grid {
+    flex: 70%;
+}
+
+
+#detail-content {
+    word-break: break-all;
+}
+
+
 .grid-container {
     display: flex;
     flex-wrap: wrap;
@@ -92,3 +114,4 @@
 #inode-container > .device-inode:before {
     content: "D";
 }
+

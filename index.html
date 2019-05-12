@@ -19,14 +19,14 @@
         <legend>Please select a xv6 image:</legend>
         <input id="file-choice1" name="file"
                onChange="main(this.value)" type="radio"
-               value="https://raw.githubusercontent.com/ShawnZhong/xv6-image-visualizer/master/images/good.img">
-        <label for="file-choice1">good.img</label>
+               value="https://raw.githubusercontent.com/ShawnZhong/xv6-image-visualizer/master/images/xv6-fs.img">
+        <label for="file-choice1">xv6-fs.img</label>
 
 
         <input id="file-choice2" name="file"
                onChange="main(this.value)" type="radio"
-               value="https://raw.githubusercontent.com/ShawnZhong/xv6-image-visualizer/master/images/xv6-fs.img">
-        <label for="file-choice2">xv6-fs.img</label>
+               value="https://raw.githubusercontent.com/ShawnZhong/xv6-image-visualizer/master/images/good.img">
+        <label for="file-choice2">good.img</label>
 
         <input id="file-choice0" name="file" type="radio">
         <label for="file-choice0">
@@ -37,18 +37,28 @@
 </form>
 
 
-<div id="block-view">
-    <h1>Blocks</h1>
-    <div class="grid-container" id="block-container"></div>
+<div id="body">
+    <div id="grid">
+        <div id="block-view">
+            <h1>Blocks</h1>
+            <div class="grid-container" id="block-container"></div>
+        </div>
+
+        <div id="inode-view">
+            <h1>Inodes</h1>
+            <div class="grid-container" id="inode-container"></div>
+        </div>
+    </div>
+
+    <div id="detail">
+        <h1>Detail</h1>
+        <div id="detail-content"></div>
+    </div>
 </div>
 
-<div id="inode-view">
-    <h1>Inodes</h1>
-    <div class="grid-container" id="inode-container"></div>
-</div>
-
-
-<script src="index.js"></script>
+<script src="js/Block.js"></script>
+<script src="js/Inode.js"></script>
+<script src="js/index.js"></script>
 
 <script>
     document.getElementById('file-choice1').click();
