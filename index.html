@@ -5,26 +5,28 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <!--    <link crossorigin="anonymous"-->
+    <!--          href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"-->
+    <!--          integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" rel="stylesheet">-->
     <link href="index.css" rel="stylesheet">
     <title>Document</title>
 </head>
 
 <body>
+
 <input onChange="main(this.files[0])" type="file"/>
-<div class="flex-container">
-    <div>1</div>
-    <div>2</div>
-    <div>3</div>
-    <div>4</div>
-    <div>5</div>
-    <div>6</div>
-    <div>7</div>
-    <div>8</div>
-    <div>9</div>
-    <div>10</div>
-    <div>11</div>
-    <div>12</div>
+
+<div id="block-view">
+    <p>Blocks</p>
+    <div id="block-container"></div>
 </div>
+
+<div id="inode-view">
+    <p>Inodes</p>
+    <div id="inode-container"></div>
+</div>
+
+
 <script src="index.js"></script>
 </body>
 

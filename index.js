@@ -1,26 +1,18 @@
-const BLOCK_SIZE = 512;
-const INODE_SIZE = 64;
-const ENTRY_SIZE = 16;
-const NDIRECT = 12;
+const blockContainerDOM = document.getElementById("block-container");
+const inodeContainerDOM = document.getElementById("inode-container");
 
 let image;
 let superBlock;
-let bitmapBlock;
 let inodes;
-
+let blocks;
 
 async function main(file) {
     image = await readFile(file);
-    superBlock = new SuperBlock();
-    bitmapBlock = new BitmapBlock();
+    initBlocks();
+    renderBlocks();
 
-    inodes = Array.from(new Array(superBlock.ninodes).keys(), i => new Inode(i));
-
-
-    console.log(superBlock);
-    console.log(bitmapBlock.getData());
-    inodes.filter(e => e.type === 1).forEach(e => console.log(e.getData()));
-    inodes.filter(e => e.type === 2).forEach(e => console.log(e.getData()));
+    initInodes();
+    renderInodes();
 }
 
 function readFile(file) {
@@ -31,9 +23,42 @@ function readFile(file) {
     });
 }
 
+function initBlocks() {
+    superBlock = new SuperBlock();
+
+    blocks = new Array(superBlock.nblocks);
+
+    blocks[0] = new Block(0);
+    blocks[1] = superBlock;
+    for (let i = 2; i < 2 + superBlock.ninodeblocks; i++)
+        blocks[i] = new InodeBlock(i);
+
+    blocks[superBlock.ninodeblocks + 2] = new BitmapBlock();
+
+    for (let i = superBlock.ninodeblocks + 3; i < superBlock.nblocks; i++)
+        blocks[i] = new DataBlock(i);
+}
+
+function renderBlocks() {
+    for (let i = 0; i < superBlock.nblocks; i++)
+        blocks[i].renderBlock();
+}
+
+function initInodes() {
+    inodes = Array.from(new Array(superBlock.ninodes).keys(), i => new Inode(i));
+}
+
+function renderInodes() {
+    inodes.forEach(e => e.render());
+}
+
 class Block {
+    static SIZE = 512;
+
     constructor(blockNumber) {
-        this.block = new DataView(image, BLOCK_SIZE * blockNumber, BLOCK_SIZE);
+        if (!blockNumber) return;
+        this.blockNumber = blockNumber;
+        this.block = new DataView(image, Block.SIZE * blockNumber, Block.SIZE);
         this.uint8Array = new Uint8Array(this.block.buffer, this.block.byteOffset, this.block.byteLength);
     }
 
@@ -52,37 +77,12 @@ class Block {
                 return Array.from(uint32Array).map(e => e.toString(16).padStart(8, '0'));
         }
     }
-}
 
-class BitmapBlock extends Block {
-    constructor() {
-        super(superBlock.ninodes * INODE_SIZE / BLOCK_SIZE + 3);
-    }
-
-    getData() {
-        return super.getData(2);
-    }
-}
-
-class DirectoryBlock extends Block {
-    constructor(blockNumber) {
-        super(blockNumber);
-    }
-
-    getEntries() {
-        let entries = {};
-        for (let i = 0; i < BLOCK_SIZE / ENTRY_SIZE; i++) {
-            const inum = this.block.getUint16(ENTRY_SIZE * i, true);
-            if (inum === 0) continue;
-
-            const nameOffset = this.block.byteOffset + ENTRY_SIZE * i + 2;
-            const nameArray = new Uint8Array(this.block.buffer, nameOffset, ENTRY_SIZE - 2);
-            const name = new TextDecoder("utf-8").decode(nameArray);
-
-            entries[name] = inum;
-        }
-
-        return entries;
+    renderBlock(className = "unused-block", body = "") {
+        let node = document.createElement("div");
+        node.classList.add(className);
+        node.innerHTML = body;
+        blockContainerDOM.appendChild(node);
     }
 }
 
@@ -93,12 +93,67 @@ class SuperBlock extends Block {
         this.size = this.block.getUint32(0, true);
         this.nblocks = this.block.getUint32(4, true);
         this.ninodes = this.block.getUint32(8, true);
+        this.ninodeblocks = this.ninodes * Inode.SIZE / Block.SIZE;
+    }
+
+    renderBlock() {
+        super.renderBlock("super-block");
+    }
+}
+
+class BitmapBlock extends Block {
+    constructor() {
+        super(superBlock.ninodeblocks + 3);
+    }
+
+    getData() {
+        return super.getData(2);
+    }
+
+    renderBlock() {
+        super.renderBlock("bitmap-block");
+    }
+}
+
+class InodeBlock extends Block {
+    renderBlock() {
+        super.renderBlock("inode-block");
+    }
+}
+
+class DataBlock extends Block {
+    renderBlock() {
+        super.renderBlock("data-block");
+    }
+}
+
+class DirectoryBlock extends DataBlock {
+    static ENTRY_SIZE = 16;
+
+    getEntries() {
+        let entries = {};
+        for (let i = 0; i < Block.SIZE / DirectoryBlock.ENTRY_SIZE; i++) {
+            const inum = this.block.getUint16(DirectoryBlock.ENTRY_SIZE * i, true);
+            if (inum === 0) continue;
+
+            const nameOffset = this.block.byteOffset + DirectoryBlock.ENTRY_SIZE * i + 2;
+            const nameArray = new Uint8Array(this.block.buffer, nameOffset, DirectoryBlock.ENTRY_SIZE - 2);
+            const name = new TextDecoder("utf-8").decode(nameArray);
+
+            entries[name] = inum;
+        }
+
+        return entries;
     }
 }
 
 class Inode {
+    static SIZE = 64;
+    static NDIRECT = 12;
+
     constructor(inum) {
-        this.inode = new DataView(image, BLOCK_SIZE * 2 + inum * INODE_SIZE);
+        this.inum = inum;
+        this.inode = new DataView(image, Block.SIZE * 2 + inum * Inode.SIZE);
 
         this.type = this.inode.getUint16(0, true);
         this.major = this.inode.getUint16(2, true);
@@ -106,38 +161,68 @@ class Inode {
         this.nlink = this.inode.getUint16(6, true);
         this.size = this.inode.getUint32(8, true);
 
-        this.indirectAddress = this.inode.getUint32(12 + NDIRECT * 4, true);
+        this.indirectAddress = this.inode.getUint32(12 + Inode.NDIRECT * 4, true);
         this.dataAddresses = this.getAddresses();
     }
 
     getAddresses() {
-        const numberOfAddresses = (this.size + BLOCK_SIZE - 1) / BLOCK_SIZE;
+        const numberOfAddresses = (this.size + Block.SIZE - 1) / Block.SIZE;
         let addresses = new Uint32Array(numberOfAddresses);
 
-        // direct address
-        for (let i = 0; i < NDIRECT; i++)
+        // direct addresses
+        for (let i = 0; i < Inode.NDIRECT; i++)
             addresses[i] = this.inode.getUint32(12 + i * 4, true);
 
-        // indirect address
-        if (numberOfAddresses > NDIRECT) {
+        // indirect addresses
+        if (numberOfAddresses > Inode.NDIRECT) {
             const indirectBlock = new Block(this.indirectAddress).block;
-            for (let i = 0; i < numberOfAddresses - NDIRECT - 1; i++)
-                addresses[NDIRECT + i] = indirectBlock.getUint32(i * 4, true);
+            for (let i = 0; i < numberOfAddresses - Inode.NDIRECT - 1; i++)
+                addresses[Inode.NDIRECT + i] = indirectBlock.getUint32(i * 4, true);
         }
 
         return addresses;
     }
 
-    getData() {
-        if (this.type === 1) { // is directory
-            return Array.from(this.dataAddresses).map(e => new DirectoryBlock(e).getEntries());
-        } else if (this.type === 2) { // is file
-            const blocks = Array.from(this.dataAddresses).map(e => new Block(e));
-            if (blocks.every(e => e.isAscii()))
-                return blocks.map(e => e.getData());
-            else
-                return blocks.map(e => e.getData(16));
+    getDirectoryDOM() {
+        const entries = Array.from(this.dataAddresses)
+            .map(e => new DirectoryBlock(e).getEntries())
+            .reduce((accumulator, currentValue) => Object.assign(accumulator, currentValue), {});
 
-        }
+        const bodyDOM = document.createElement("div");
+        bodyDOM.innerHTML = Object.entries(entries).map(([name, inum]) => `${name} => ${inum}`).join("<br>");
+        return bodyDOM;
+    }
+
+
+    getFileDOM() {
+        const blocks = Array.from(this.dataAddresses).map(e => new Block(e));
+        const bodyDOM = document.createElement("div");
+        // if (blocks.every(e => e.isAscii()))
+        //     bodyDOM.innerHTML = blocks.map(e => e.getData()).toString();
+        // else
+        //     bodyDOM.innerHTML = blocks.map(e => e.getData(16)).toString();
+
+        return bodyDOM;
+    }
+
+
+    render() {
+        const titleDOM = document.createElement("div");
+        titleDOM.innerText = `inum = ${this.inum}; type = ${this.type}`;
+
+
+        const containerDOM = document.createElement("div");
+        containerDOM.appendChild(titleDOM);
+
+
+        if (this.type === 1)
+            containerDOM.appendChild(this.getDirectoryDOM());
+        else if (this.type === 2)
+            containerDOM.appendChild(this.getFileDOM());
+
+
+        inodeContainerDOM.appendChild(containerDOM);
+
+
     }
 }

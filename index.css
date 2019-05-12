@@ -1,14 +1,58 @@
-.flex-container {
-    display: flex;
-    flex-wrap: wrap;
-    background-color: DodgerBlue;
+body {
+    font-family: sans-serif;
 }
 
-.flex-container > div {
-    background-color: #f1f1f1;
-    width: 100px;
-    margin: 10px;
+#block-container {
+    display: flex;
+    flex-wrap: wrap;
     text-align: center;
-    line-height: 75px;
-    font-size: 30px;
+    color: white;
+}
+
+#block-container > div {
+    width: 1.5rem;
+    padding: 0.25rem 0;
+    border: solid 1px white;
+}
+
+#block-container > .super-block {
+    background-color: #f44336;
+}
+
+#block-container > .super-block:before {
+    content: "S";
+}
+
+#block-container > .unused-block {
+    background-color: #424242;
+}
+
+#block-container > .unused-block:before {
+    content: "U";
+}
+
+
+#block-container > .inode-block {
+    background-color: #4caf50;
+}
+
+#block-container > .inode-block:before {
+    content: "I";
+}
+
+
+#block-container > .bitmap-block {
+    background-color: #3f51b5;
+}
+
+#block-container > .bitmap-block:before {
+    content: "B";
+}
+
+#block-container > .data-block {
+    background-color: #03a9f4;
+}
+
+#block-container > .data-block:before {
+    content: "D";
 }
