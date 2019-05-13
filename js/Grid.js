@@ -57,7 +57,6 @@ class Grid {
         // implemented by child class
     }
 
-
     /**
      * @returns {Grid[]}
      */
