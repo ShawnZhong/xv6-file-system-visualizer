@@ -32,7 +32,7 @@ class Inode extends Grid {
         this.typeName = InodeUtils.getTypeName(this.type);
 
         this.pathList = [];
-
+        this.fileTreeDOMList = [];
 
         this.initAddresses();
         this.initBlocks();
@@ -154,5 +154,16 @@ class Inode extends Grid {
         const node = document.createElement("h3");
         node.innerText = `Inode ${this.inum}: ${this.typeName}`;
         return node;
+    }
+
+    initGridDOM() {
+        super.initGridDOM();
+
+        this.fileTreeDOMList.forEach(e => {
+            e.onmouseover = this.gridDOM.onmouseover;
+            e.onclick = this.gridDOM.onclick;
+        });
+
+        return this.gridDOM;
     }
 }

@@ -5,6 +5,7 @@ let enableHover = true;
 
 let activeElem;
 let relatedElems;
+let fileTreeElems;
 
 class GridUtils {
     static setActive(newActiveElem) {
@@ -12,6 +13,8 @@ class GridUtils {
             activeElem.gridDOM.classList.remove("hovered", "selected");
         if (relatedElems)
             relatedElems.forEach(e => e.classList.remove("related"));
+        if (fileTreeElems)
+            fileTreeElems.forEach(e => e.classList.remove("focused"));
 
         activeElem = newActiveElem;
 
@@ -21,6 +24,12 @@ class GridUtils {
 
         relatedElems = activeElem.getRelatedGrid().map(e => e.gridDOM);
         relatedElems.forEach(e => e.classList.add("related"));
+
+
+        if (newActiveElem.fileTreeDOMList) {
+            fileTreeElems = newActiveElem.fileTreeDOMList;
+            fileTreeElems.forEach(e => e.classList.add("focused"))
+        }
     }
 }
 
