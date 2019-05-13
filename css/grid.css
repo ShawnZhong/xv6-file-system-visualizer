@@ -14,8 +14,8 @@
 
 .grid-container > div.hovered {
     box-shadow: 0 0 3px black;
+    font-weight: bold;
     z-index: 0;
-    color: black;
 }
 
 .grid-container > div.selected {
@@ -23,7 +23,6 @@
     font-weight: bold;
     border-color: black;
     z-index: 0;
-    color: black;
 }
 
 .grid-container > div.related {

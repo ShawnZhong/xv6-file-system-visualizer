@@ -67,7 +67,7 @@ class Grid {
             GridUtils.setActive(this);
             activeElem.gridDOM.classList.add("hovered");
         };
-        
+
         this.gridDOM.onclick = () => {
             enableHover = !enableHover;
             GridUtils.setActive(this);
