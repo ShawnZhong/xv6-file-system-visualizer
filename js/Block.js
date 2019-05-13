@@ -118,7 +118,6 @@ class SuperBlock extends Block {
     getGridDOM() {
         const node = super.getGridDOM();
         node.onmouseover();
-        Grid.currentHoveredItem = node;
         return node;
     }
 }

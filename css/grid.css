@@ -12,8 +12,17 @@
     border: solid 1px white;
 }
 
+.grid-container > div.hovered {
+    box-shadow: 0 0 3px black;
+
+    z-index: 0;
+}
+
 .grid-container > div.selected {
     box-shadow: 0 0 5px black;
+    font-weight: bold;
+    border-color: black;
+    text-decoration: underline;
     z-index: 0;
 }
 

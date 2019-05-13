@@ -6,9 +6,18 @@ class InodeUtils {
         inodeList.forEach(e => Inode.container.appendChild(e.getGridDOM()));
     }
 
-
     static initInodeList() {
         inodeList = Array.from(new Array(superBlock.ninodes).keys(), i => new Inode(i));
+    }
+
+    static getTypeName(type) {
+        if (type > 3) return "Unknown";
+        return ["Unused", "Directory", "File", "Device"][type];
+    }
+
+
+    static getIndirectBlockAddress(inode) {
+        return inode.getUint32(12 + Config.numberOfDirectAddress * 4, true);
     }
 }
 
@@ -27,17 +36,12 @@ class Inode extends Grid {
         this.nlink = this.inode.getUint16(6, true);
         this.size = this.inode.getUint32(8, true);
 
-        this.indirectAddress = this.inode.getUint32(12 + Config.numberOfDirectAddress * 4, true);
+        this.indirectAddress = InodeUtils.getIndirectBlockAddress(this.inode);
         this.dataAddresses = this.getAddresses();
-        this.typeName = this.getTypeName();
+        this.typeName = InodeUtils.getTypeName(this.type);
         this.dataBlocks = this.getDataBlocks();
 
         this.gridDOM = this.getGridDOM();
-    }
-
-    getTypeName() {
-        if (this.type > 3) return "Unknown";
-        return ["Unused", "Directory", "File", "Device"][this.type];
     }
 
     getClassName() {

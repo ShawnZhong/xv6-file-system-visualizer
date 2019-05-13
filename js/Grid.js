@@ -1,14 +1,67 @@
-const detailContent = document.getElementById("detail-content");
-const detailTitle = document.getElementById("detail-title");
+class GridUtils {
+    static detailContentDOM = document.getElementById("detail-content");
+    static detailTitleDOM = document.getElementById("detail-title");
+
+    static currentHovered;
+    static currentSelectedItem;
+
+    static enableHover = true;
+
+
+    static showDetail(elem) {
+        GridUtils.detailTitleDOM.innerText = elem.getDetailTitleDOM().innerText;
+        GridUtils.detailContentDOM.innerHTML = '';
+        GridUtils.detailContentDOM.appendChild(elem.getDetailContentDOM());
+    }
+
+    static removeHovered() {
+        if (GridUtils.currentHovered)
+            GridUtils.currentHovered.gridDOM.classList.remove("hovered");
+    }
+
+    static removeSelected() {
+        if (GridUtils.currentSelectedItem)
+            GridUtils.currentSelectedItem.gridDOM.classList.remove("selected");
+    }
+
+    static setHovered(elem) {
+        if (!GridUtils.enableHover) return;
+        GridUtils.removeHovered();
+
+        elem.gridDOM.classList.add("hovered");
+        GridUtils.currentHovered = elem;
+
+        GridUtils.showDetail(elem);
+    }
+
+    static setSelected(elem) {
+        if (!GridUtils.enableHover) {
+            GridUtils.enableHover = true;
+            GridUtils.removeSelected();
+            return;
+        }
+        
+        GridUtils.removeSelected();
+
+        elem.gridDOM.classList.add("selected");
+        GridUtils.currentSelectedItem = elem;
+
+        GridUtils.enableHover = false;
+        GridUtils.removeHovered();
+
+        GridUtils.showDetail(elem);
+    }
+}
 
 class Grid {
-    static currentHoveredItem;
-
     /**
      * @type {HTMLBaseElement}
      */
     container;
 
+    /**
+     * @type {HTMLDivElement}
+     */
     gridDOM;
 
     /**
@@ -36,20 +89,12 @@ class Grid {
      * @returns {HTMLDivElement} an element in the grid
      */
     getGridDOM() {
-        const node = document.createElement("div");
-        node.classList.add(this.getClassName());
-        node.onmouseover = () => {
-            if (Grid.currentHoveredItem)
-                Grid.currentHoveredItem.classList.remove("selected");
-            detailTitle.innerText = this.getDetailTitleDOM().innerText;
-            detailContent.innerHTML = '';
-            detailContent.appendChild(this.getDetailContentDOM());
-            node.classList.add("selected");
-            Grid.currentHoveredItem = node;
-        };
+        this.gridDOM = document.createElement("div");
+        this.gridDOM.classList.add(this.getClassName());
 
-        this.gridDOM = node;
+        this.gridDOM.onmouseover = () => GridUtils.setHovered(this);
+        this.gridDOM.onclick = () => GridUtils.setSelected(this);
 
-        return node;
+        return this.gridDOM;
     }
 }
