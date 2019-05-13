@@ -1,21 +1,32 @@
 class Block {
+    type = "block";
+    belongsToTextFile = false;
+    isDirectoryBlock = false;
 
     constructor(blockNumber) {
-        if (!blockNumber) return;
         this.blockNumber = blockNumber;
+
         this.block = new DataView(image, Config.blockSize * blockNumber, Config.blockSize);
         this.uint8Array = new Uint8Array(this.block.buffer, this.block.byteOffset, this.block.byteLength);
         this.uint32Array = new Uint32Array(this.block.buffer, this.block.byteOffset, this.block.byteLength);
 
-        this.isTextFile = false;
-        this.isDirectoryBlock = false;
+        this.isBlockAscii = this.uint8Array.every(e => e < 128);
     }
 
-    isBlockAscii() {
-        return this.uint8Array.every(e => e < 128);
+    getHumanReadableDataDOM(innerHTML) {
+        const node = document.createElement("div");
+        if (innerHTML)
+            node.innerHTML = innerHTML;
+        else if (this.isDirectoryBlock)
+            node.innerHTML = this.getEntriesDOM().innerHTML;
+        else if (this.belongsToTextFile)
+            node.innerHTML = new TextDecoder("utf-8").decode(this.block);
+        else
+            return;
+        return node;
     }
 
-    getHexDataDOM() {
+    getMachineReadableDataDOM() {
         const node = document.createElement("pre");
         node.innerHTML = Array.from(this.uint32Array)
             .map(e => e.toString(16).padStart(8, '0'))
@@ -23,35 +34,89 @@ class Block {
         return node;
     }
 
-    isHumanReadable() {
-        return this.isDirectoryBlock || this.isTextFile;
-    }
-
-    getHumanReadableDataDOM() {
+    getBlockSummaryDOM() {
+        const blockSummary = document.createElement("h4");
+        blockSummary.innerText = `Block ${this.blockNumber}: ${this.type}`;
 
         const node = document.createElement("div");
-        if (this.isDirectoryBlock)
-            node.innerHTML = this.getEntires();
-        else if (this.isTextFile)
-            node.innerHTML = new TextDecoder("utf-8").decode(this.block);
+        node.appendChild(blockSummary);
         return node;
+
     }
 
     getDetailDOM() {
         const node = document.createElement("div");
-        node.appendChild(this.isHumanReadable() ? this.getHumanReadableDataDOM() : this.getHexDataDOM());
+        node.appendChild(this.getBlockSummaryDOM());
+
+        const humanReadableDataDOM = this.getHumanReadableDataDOM();
+        if (humanReadableDataDOM)
+            node.appendChild(humanReadableDataDOM);
+        else
+            node.appendChild(this.getMachineReadableDataDOM());
+
         return node;
     }
 
-    renderGrid(className = "unused-block", body = "") {
+    renderGrid() {
         const node = document.createElement("div");
-        node.classList.add(className);
-        node.onmouseover = () => detailContentDOM.innerHTML = this.getDetailDOM().innerHTML;
-        node.innerHTML = body;
+        node.classList.add(this.type.toLowerCase().replace(' ', '-'));
+        node.onmouseover = () => {
+            detailContentDOM.innerHTML = this.getDetailDOM().innerHTML;
+            node.classList.add("hover");
+        };
+
+        node.onmouseleave = () => node.classList.remove("hover");
         blockContainerDOM.appendChild(node);
     }
 
-    getEntires() {
+
+}
+
+
+class SuperBlock extends Block {
+    type = "Super Block";
+
+    constructor(blockNumber) {
+        super(blockNumber);
+
+        this.size = this.block.getUint32(0, true);
+        this.nblocks = this.block.getUint32(4, true);
+        this.ninodes = this.block.getUint32(8, true);
+        this.ninodeblocks = this.ninodes * Config.inodeSize / Config.blockSize;
+    }
+
+    getHumanReadableDataDOM() {
+        const innerHTML = `${this.size} + ${this.nblocks} + ${this.ninodes}`;
+        return super.getHumanReadableDataDOM(innerHTML);
+    }
+}
+
+class BitmapBlock extends Block {
+    type = "Bitmap Block";
+
+    getMachineReadableDataDOM() {
+        const node = document.createElement("pre");
+        node.innerHTML = Array.from(this.uint8Array)
+            .map(e => e.toString(2).padStart(8, '0'))
+            .join(", \t");
+        return node;
+    }
+
+}
+
+class UnusedBlock extends Block {
+    type = "Unused Block";
+}
+
+class InodeBlock extends Block {
+    type = "Inode Block";
+}
+
+class DataBlock extends Block {
+    type = "Data Block";
+
+
+    getEntries() {
         let entries = {};
         for (let i = 0; i < Config.blockSize / Config.entrySize; i++) {
             const inum = this.block.getUint16(Config.entrySize * i, true);
@@ -64,52 +129,13 @@ class Block {
             entries[name] = inum;
         }
 
-        return Object.entries(entries).map(([name, inum]) => `${name} => ${inum}`).join("<br>");
+        return entries;
     }
 
-}
-
-class SuperBlock extends Block {
-    constructor() {
-        super(1);
-
-        this.size = this.block.getUint32(0, true);
-        this.nblocks = this.block.getUint32(4, true);
-        this.ninodes = this.block.getUint32(8, true);
-        this.ninodeblocks = this.ninodes * Config.inodeSize / Config.blockSize;
-    }
-
-    renderGrid() {
-        super.renderGrid("super-block");
-    }
-}
-
-class BitmapBlock extends Block {
-    constructor() {
-        super(superBlock.ninodeblocks + 3);
-    }
-
-    getHexDataDOM() {
-        const node = document.createElement("pre");
-        node.innerHTML = Array.from(this.uint8Array)
-            .map(e => e.toString(2).padStart(8, '0'))
-            .join(", \t");
+    getEntriesDOM() {
+        const entries = this.getEntries();
+        const node = document.createElement("div");
+        node.innerHTML = Object.entries(entries).map(([name, inum]) => `${name} → ${inum}`).join("<br>");
         return node;
-    }
-
-    renderGrid() {
-        super.renderGrid("bitmap-block");
-    }
-}
-
-class InodeBlock extends Block {
-    renderGrid() {
-        super.renderGrid("inode-block");
-    }
-}
-
-class DataBlock extends Block {
-    renderGrid() {
-        super.renderGrid("data-block");
     }
 }

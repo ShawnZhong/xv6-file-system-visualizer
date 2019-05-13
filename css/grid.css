@@ -1,30 +1,3 @@
-body {
-    font-family: sans-serif;
-}
-
-pre {
-    white-space: pre-wrap;
-    tab-size: 12;
-}
-
-#body {
-    display: flex;
-}
-
-#detail {
-    flex: 30%;
-}
-
-#grid {
-    flex: 70%;
-}
-
-
-#detail-content {
-    word-break: break-all;
-}
-
-
 .grid-container {
     display: flex;
     flex-wrap: wrap;
@@ -39,6 +12,10 @@ pre {
     border: solid 1px white;
 }
 
+.grid-container > div.hover {
+    border-color: black;
+}
+
 #block-container > .super-block {
     background-color: #f44336;
 }
@@ -48,7 +25,7 @@ pre {
 }
 
 #block-container > .unused-block {
-    background-color: #424242;
+    background-color: gray;
 }
 
 #block-container > .unused-block:before {
@@ -81,7 +58,7 @@ pre {
 }
 
 #inode-container > .unused-inode {
-    background-color: #424242;
+    background-color: gray;
 }
 
 #inode-container > .unused-inode:before {
@@ -119,4 +96,3 @@ pre {
 #inode-container > .device-inode:before {
     content: "D";
 }
-

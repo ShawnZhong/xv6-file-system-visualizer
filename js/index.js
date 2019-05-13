@@ -30,19 +30,22 @@ async function loadImage(file) {
 }
 
 function initBlocks() {
-    superBlock = new SuperBlock();
-
+    superBlock = new SuperBlock(1);
     blocks = new Array(superBlock.nblocks);
 
-    blocks[0] = new Block(0);
+    blocks[0] = new UnusedBlock(0);
     blocks[1] = superBlock;
-    for (let i = 2; i < 2 + superBlock.ninodeblocks; i++)
-        blocks[i] = new InodeBlock(i);
 
-    blocks[superBlock.ninodeblocks + 3] = new BitmapBlock();
+    let i = 2;
 
-    for (let i = superBlock.ninodeblocks + 4; i < superBlock.nblocks; i++)
-        blocks[i] = new DataBlock(i);
+    while (i < 2 + superBlock.ninodeblocks)
+        blocks[i] = new InodeBlock(i++);
+
+    blocks[i] = new UnusedBlock(i++);
+    blocks[i] = new BitmapBlock(i++);
+
+    while (i < superBlock.nblocks)
+        blocks[i] = new DataBlock(i++);
 }
 
 function initInodes() {

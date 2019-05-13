@@ -18,7 +18,7 @@ class Inode {
 
     getTypeName() {
         if (this.type > 3) return "Unknown";
-        return ["unused", "directory", "file", "device"][this.type];
+        return ["Unused", "Directory", "File", "Device"][this.type];
     }
 
     getAddresses() {
@@ -43,23 +43,61 @@ class Inode {
         const dataBlocks = Array.from(this.dataAddresses).map(i => blocks[i]);
         if (this.type === 1)
             dataBlocks.forEach(e => e.isDirectoryBlock = true);
-        else if (dataBlocks.every(e => e.isBlockAscii()))
-            dataBlocks.forEach(e => e.isTextFile = true);
+        else if (dataBlocks.every(e => e.isBlockAscii))
+            dataBlocks.forEach(e => e.belongsToTextFile = true);
         return dataBlocks;
     }
 
     getDataBlocksDOM() {
         const node = document.createElement("div");
-        this.dataBlocks.map(e => e.getDetailDOM()).forEach(e => node.appendChild(e));
+
+        const title = document.createElement("h2");
+        title.innerText = "Data Blocks";
+        node.appendChild(title);
+
+        if (this.dataAddresses.length !== 0) {
+            this.dataBlocks.map(e => e.getDetailDOM()).forEach(e => node.appendChild(e));
+        } else {
+            const noDataBlocks = document.createElement("p");
+            noDataBlocks.innerText = "This inode does not have any data blocks";
+            node.appendChild(noDataBlocks);
+        }
         return node;
     }
 
 
     getInodeSummaryDOM() {
         const node = document.createElement("div");
-        node.innerHTML =
-            `type = ${this.type}, dataAddresses = ${this.dataAddresses}
-        `;
+
+        const title = document.createElement("h2");
+        title.innerText = "Inode Summary";
+        node.appendChild(title);
+
+        const type = document.createElement("p");
+        type.innerText = "Type: " + this.typeName;
+        node.appendChild(type);
+
+        const nlink = document.createElement("p");
+        nlink.innerText = "Number of links: " + this.nlink;
+        node.appendChild(nlink);
+
+        if (this.type === 3) {
+            const major = document.createElement("p");
+            major.innerText = "Major device number: " + this.major;
+            node.appendChild(major);
+
+
+            const minor = document.createElement("p");
+            minor.innerText = "Minor device number: " + this.minor;
+            node.appendChild(minor);
+        }
+
+        if (this.dataAddresses.length !== 0) {
+            const dataAddresses = document.createElement("p");
+            dataAddresses.innerText = "Data block addresses: " + this.dataAddresses.join(", ");
+            node.appendChild(dataAddresses);
+        }
+
         return node;
     }
 
@@ -72,9 +110,12 @@ class Inode {
 
     renderGrid() {
         const node = document.createElement("div");
-        node.classList.add(this.typeName + "-inode");
-        node.setAttribute("inum", this.inum);
-        node.onmouseover = () => detailContentDOM.innerHTML = this.getDetailDOM().innerHTML;
+        node.classList.add(this.typeName.toLowerCase() + "-inode");
+        node.onmouseover = () => {
+            detailContentDOM.innerHTML = this.getDetailDOM().innerHTML;
+            node.classList.add("hover");
+        };
+        node.onmouseleave = () => node.classList.remove("hover");
         inodeContainerDOM.appendChild(node);
     }
 }

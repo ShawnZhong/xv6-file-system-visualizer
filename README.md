@@ -1,1 +1,1 @@
-# xv6-image-visualizer
+# xv6 File System Visualizer

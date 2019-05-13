@@ -8,24 +8,25 @@
     <!--    <link crossorigin="anonymous"-->
     <!--          href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"-->
     <!--          integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" rel="stylesheet">-->
-    <link href="index.css" rel="stylesheet">
-    <title>Document</title>
+    <link href="css/index.css" rel="stylesheet">
+    <link href="css/grid.css" rel="stylesheet">
+    <title>xv6 File System Visualizer</title>
 </head>
 
 <body>
 
 <form>
     <fieldset>
-        <legend>Please select a xv6 image:</legend>
+        <legend>Please select a xv6 file system image:</legend>
         <input id="file-choice1" name="file"
                onChange="main(this.value)" type="radio"
-               value="https://raw.githubusercontent.com/ShawnZhong/xv6-image-visualizer/master/images/xv6-fs.img">
+               value="https://raw.githubusercontent.com/ShawnZhong/xv6-file-system-visualizer/master/fs/xv6-fs.img">
         <label for="file-choice1">xv6-fs.img</label>
 
 
         <input id="file-choice2" name="file"
                onChange="main(this.value)" type="radio"
-               value="https://raw.githubusercontent.com/ShawnZhong/xv6-image-visualizer/master/images/good.img">
+               value="https://raw.githubusercontent.com/ShawnZhong/xv6-file-system-visualizer/master/fs/good.img">
         <label for="file-choice2">good.img</label>
 
         <input id="file-choice0" name="file" type="radio">
