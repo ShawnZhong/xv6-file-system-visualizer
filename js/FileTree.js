@@ -1,26 +1,23 @@
 class FileTree {
-    static directoryList;
     static fileTreeDOM = document.getElementById("file-tree-content");
 
     static render() {
-        this.directoryList = inodeList.map(inode =>
-            inode.type === 1 ? Object.assign({}, ...inode.dataBlocks.map(block => block.getEntries())) : null
-        );
-
         this.fileTreeDOM.innerHTML = '';
-        this.traverse(1, 0);
+        inodeList[1].pathList.push('/');
+        this.traverse();
     }
 
-    static traverse(directoryNumber, indentation) {
-        const directory = this.directoryList[directoryNumber];
+    static traverse(parentInum = 1, parentPath = '', indentation = 0) {
+        const directory = inodeList[parentInum].directoryList;
         for (const [name, inum] of Object.entries(directory)) {
-            const node = document.createElement("div");
-            node.innerText = `${' '.repeat(indentation)}${name} → ${inum}`;
-            this.fileTreeDOM.appendChild(node);
+            this.fileTreeDOM.innerText += `${' '.repeat(indentation)}${name} → ${inum} \n`;
 
-            if (inodeList[inum].type === 1 && name !== '.' && name !== '..') {
-                this.traverse(inum, indentation + 4);
-            }
+            if (name === '.' || name === '..') continue;
+
+            const path = parentPath + "/" + name;
+            inodeList[inum].pathList.push(path);
+            if (inodeList[inum].type === 1)
+                this.traverse(inum, path, indentation + 4);
         }
 
     }

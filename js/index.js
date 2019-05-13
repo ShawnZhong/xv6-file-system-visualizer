@@ -6,9 +6,9 @@ async function main(file) {
     BlockUtils.initBlockList();
     InodeUtils.initInodeList();
 
+    FileTree.render();
     BlockUtils.render();
     InodeUtils.render();
-    FileTree.render();
 }
 
 async function loadImage(file) {

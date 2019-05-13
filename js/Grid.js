@@ -9,69 +9,41 @@ class GridUtils {
     static enableHover = true;
 
 
-    static showDetail() {
-        GridUtils.detailTitleDOM.innerText = GridUtils.hoveredElem.getDetailTitleDOM().innerText;
-        GridUtils.detailContentDOM.innerHTML = '';
-        GridUtils.detailContentDOM.appendChild(GridUtils.hoveredElem.detailContentDOM);
-    }
-
-    static removeHovered() {
+    static clear() {
         if (GridUtils.hoveredElem)
             GridUtils.hoveredElem.gridDOM.classList.remove("hovered");
-    }
-
-    static removeSelected() {
         if (GridUtils.selectedElem)
             GridUtils.selectedElem.gridDOM.classList.remove("selected");
-    }
-
-    static removeRelated() {
         if (GridUtils.relatedElems)
             GridUtils.relatedElems.forEach(e => e.classList.remove("related"))
     }
 
-    static setHovered(elem) {
-        if (!GridUtils.enableHover) return;
-        GridUtils.removeHovered();
-        GridUtils.removeRelated();
+    static focus() {
+        GridUtils.detailTitleDOM.innerText = GridUtils.hoveredElem.getDetailTitleDOM().innerText;
+        GridUtils.detailContentDOM.innerHTML = '';
+        GridUtils.detailContentDOM.appendChild(GridUtils.hoveredElem.detailContentDOM);
 
-        GridUtils.hoveredElem = elem;
-        GridUtils.relatedElems = elem.getRelatedGrid().map(e => e.gridDOM);
-
-        elem.gridDOM.classList.add("hovered");
         GridUtils.relatedElems.forEach(e => e.classList.add("related"));
-
-
-        GridUtils.showDetail();
     }
 
-    static setSelected(elem) {
-        if (!GridUtils.enableHover) {
-            GridUtils.enableHover = true;
-            GridUtils.removeSelected();
-            return;
-        }
 
-        GridUtils.removeSelected();
-        GridUtils.removeHovered();
-        GridUtils.removeRelated();
+    static setHovered() {
+        if (!GridUtils.enableHover) return;
 
-        GridUtils.enableHover = false;
-        elem.gridDOM.classList.add("selected");
+        GridUtils.hoveredElem.gridDOM.classList.add("hovered");
+        GridUtils.focus();
+    }
 
+    static setSelected() {
+        GridUtils.enableHover = !GridUtils.enableHover;
+        if (GridUtils.enableHover) return;
 
-        GridUtils.selectedElem = elem;
-
-        GridUtils.showDetail();
+        GridUtils.selectedElem.gridDOM.classList.add("selected");
+        GridUtils.focus();
     }
 }
 
 class Grid {
-    /**
-     * @type {HTMLBaseElement}
-     */
-    container;
-
     /**
      * @type {HTMLDivElement}
      */
@@ -120,8 +92,18 @@ class Grid {
         this.gridDOM = document.createElement("div");
         this.gridDOM.classList.add(this.getClassName());
 
-        this.gridDOM.onmouseover = () => GridUtils.setHovered(this);
-        this.gridDOM.onclick = () => GridUtils.setSelected(this);
+        this.gridDOM.onmouseover = () => {
+            GridUtils.clear();
+            GridUtils.hoveredElem = this;
+            GridUtils.relatedElems = this.getRelatedGrid().map(e => e.gridDOM);
+            GridUtils.setHovered();
+        };
+        this.gridDOM.onclick = () => {
+            GridUtils.clear();
+            GridUtils.selectedElem = this;
+            GridUtils.relatedElems = this.getRelatedGrid().map(e => e.gridDOM);
+            GridUtils.setSelected()
+        };
 
         return this.gridDOM;
     }

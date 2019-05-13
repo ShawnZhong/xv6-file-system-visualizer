@@ -27,12 +27,11 @@
 
 .grid-container > div.related {
     font-weight: bold;
-    text-decoration: underline;
     color: black;
 }
 
 #block-container > .super-block {
-    background-color: #f44336;
+    background-color: black;
 }
 
 #block-container > .super-block:before {
@@ -57,7 +56,7 @@
 }
 
 #block-container > .bitmap-block {
-    background-color: #3f51b5;
+    background-color: #f44336;
 }
 
 #block-container > .bitmap-block:before {

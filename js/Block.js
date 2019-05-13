@@ -2,41 +2,45 @@ let superBlock;
 let blockList;
 
 class BlockUtils {
+    static bitmap;
+    static container = document.getElementById("block-container");
+
     static render() {
-        Block.container.innerHTML = "";
-        blockList.forEach(e => Block.container.appendChild(e.initGridDOM()));
+        BlockUtils.container.innerHTML = "";
+        blockList.forEach(e => BlockUtils.container.appendChild(e.initGridDOM()));
         superBlock.gridDOM.onmouseover();
     }
 
     static initBlockList() {
         superBlock = new SuperBlock(1);
-        blockList = new Array(superBlock.nblocks);
+        blockList = [];
 
-        blockList[0] = new UnusedBlock(0);
-        blockList[1] = superBlock;
+
+        blockList.push(new UnusedBlock(0));
+        blockList.push(superBlock);
 
         let i = 2;
 
-        while (i < 2 + superBlock.ninodeblocks)
-            blockList[i] = new InodeBlock(i++);
+        while (i < 2 + superBlock.ninodeblocks) {
+            blockList.push(new InodeBlock(i++));
+        }
 
-        blockList[i] = new UnusedBlock(i++);
-        blockList[i] = new BitmapBlock(i++);
+        blockList.push(new UnusedBlock(i++));
+
+        BlockUtils.bitmap = new BitmapBlock(i++);
+        blockList.push(BlockUtils.bitmap);
 
         while (i < superBlock.nblocks)
-            blockList[i] = new DataBlock(i++);
+            blockList.push(BlockUtils.isDataBlockEmpty(i) ? new UnusedBlock(i++) : new DataBlock(i++));
+    }
+
+    static isDataBlockEmpty(blockNumber) {
+        return (BlockUtils.bitmap.dataView.getUint8(blockNumber / 8) & (1 << blockNumber % 8)) === 0;
     }
 }
 
 
 class Block extends Grid {
-    static container = document.getElementById("block-container");
-
-    type = "Block";
-    belongsToTextFile = false;
-    isDirectoryBlock = false;
-    belongsToInum = -1;
-
     constructor(blockNumber) {
         super();
         this.blockNumber = blockNumber;
@@ -47,25 +51,11 @@ class Block extends Grid {
     }
 
 
-    isBlockAscii() {
-        return this.uint8Array.every(e => e < 128);
-    }
-
     getClassName() {
         return this.type.toLowerCase().replace(' ', '-');
     }
 
     getDetailContentDOM() {
-        if (this.isDirectoryBlock)
-            return this.getEntriesDOM();
-
-        if (this.belongsToTextFile) {
-            const node = document.createElement("pre");
-            node.innerText = new TextDecoder("utf-8").decode(this.dataView);
-            return node;
-        }
-
-
         const node = document.createElement("pre");
         node.innerText = Array.from(this.uint32Array)
             .map(e => e.toString(16).padStart(8, '0'))
@@ -78,11 +68,6 @@ class Block extends Grid {
         const node = document.createElement("h4");
         node.innerText = `Block ${this.blockNumber}: ${this.type}`;
         return node;
-    }
-
-    getRelatedGrid() {
-        if (this.belongsToInum !== -1) return [inodeList[this.belongsToInum]];
-        return super.getRelatedGrid();
     }
 }
 
@@ -133,6 +118,26 @@ class BitmapBlock extends Block {
 
 class DataBlock extends Block {
     type = "Data Block";
+    belongsToTextFile = false;
+    isDirectoryBlock = false;
+
+
+    isBlockAscii() {
+        return this.uint8Array.every(e => e < 128);
+    }
+
+    getDetailContentDOM() {
+        if (this.isDirectoryBlock)
+            return this.getEntriesDOM();
+
+        if (this.belongsToTextFile) {
+            const node = document.createElement("pre");
+            node.innerText = new TextDecoder("utf-8").decode(this.dataView);
+            return node;
+        }
+
+        return super.getDetailContentDOM();
+    }
 
     getEntries() {
         let entries = {};
@@ -141,7 +146,6 @@ class DataBlock extends Block {
             if (inum === 0) continue;
 
             const nameOffset = this.dataView.byteOffset + Config.entrySize * i + 2;
-
             const nameArray = new Uint8Array(this.dataView.buffer, nameOffset, Config.entrySize - 2);
             const name = new TextDecoder("utf-8").decode(nameArray).replace(/\0/g, '');
 
@@ -157,13 +161,23 @@ class DataBlock extends Block {
         node.innerHTML = Object.entries(entries).map(([name, inum]) => `${name} → ${inum}`).join("<br>");
         return node;
     }
+
+    getRelatedGrid() {
+        return this.belongingInode ? [this.belongingInode] : [];
+    }
 }
 
-class UnusedBlock extends Block {
-    type = "Unused Block";
-
-}
 
 class InodeBlock extends Block {
     type = "Inode Block";
+
+    getRelatedGrid() {
+        return [...Array(Config.numberOfInodesPerBlock).keys()]
+            .map(i => i + Config.numberOfInodesPerBlock * (this.blockNumber - 2))
+            .map(i => inodeList[i]);
+    }
+}
+
+class UnusedBlock extends DataBlock {
+    type = "Unused Block";
 }

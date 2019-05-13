@@ -1,9 +1,11 @@
 let inodeList;
 
 class InodeUtils {
+    static container = document.getElementById("inode-container");
+
     static render() {
-        Inode.container.innerHTML = "";
-        inodeList.forEach(e => Inode.container.appendChild(e.gridDOM));
+        InodeUtils.container.innerHTML = "";
+        inodeList.forEach(e => InodeUtils.container.appendChild(e.initGridDOM()));
     }
 
     static initInodeList() {
@@ -18,8 +20,6 @@ class InodeUtils {
 
 
 class Inode extends Grid {
-    static container = document.getElementById("inode-container");
-
     constructor(inum) {
         super();
         this.inum = inum;
@@ -32,10 +32,11 @@ class Inode extends Grid {
         this.size = this.inode.getUint32(8, true);
         this.typeName = InodeUtils.getTypeName(this.type);
 
+        this.pathList = [];
+
 
         this.initAddresses();
         this.initBlocks();
-        this.initGridDOM();
     }
 
 
@@ -67,11 +68,12 @@ class Inode extends Grid {
     initBlocks() {
         this.dataBlocks = this.dataAddresses.map(i => blockList[i]);
         this.allBlocks = this.allAddresses.map(i => blockList[i]);
-        this.allBlocks.forEach(e => e.belongsToInum = this.inum);
+        this.allBlocks.forEach(e => e.belongingInode = this);
 
-        if (this.type === 1)
+        if (this.type === 1) {
             this.dataBlocks.forEach(e => e.isDirectoryBlock = true);
-        else if (this.dataBlocks.every(e => e.isBlockAscii()))
+            this.directoryList = Object.assign({}, ...this.dataBlocks.map(block => block.getEntries()));
+        } else if (this.dataBlocks.every(e => e.isBlockAscii()))
             this.dataBlocks.forEach(e => e.belongsToTextFile = true);
     }
 
@@ -85,6 +87,13 @@ class Inode extends Grid {
 
     getDetailContentDOM() {
         const node = document.createElement("div");
+
+        // path
+        if (this.pathList.length !== 0) {
+            const path = document.createElement("p");
+            path.innerText = "Path: " + this.pathList.join(", ");
+            node.appendChild(path);
+        }
 
         // size
         if (this.type === 1 || this.type === 2) {
