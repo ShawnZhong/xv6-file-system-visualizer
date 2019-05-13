@@ -14,14 +14,12 @@
 <form>
     <fieldset>
         <legend>Please select a xv6 file system image:</legend>
-        <input id="file-choice1" name="file"
-               onChange="main(this.value)" type="radio"
+        <input id="file-choice1" name="file" onChange="main(this.value)" type="radio"
                value="https://raw.githubusercontent.com/ShawnZhong/xv6-file-system-visualizer/master/fs/xv6-fs.img">
         <label for="file-choice1">xv6-fs.img</label>
 
 
-        <input id="file-choice2" name="file"
-               onChange="main(this.value)" type="radio"
+        <input id="file-choice2" name="file" onChange="main(this.value)" type="radio"
                value="https://raw.githubusercontent.com/ShawnZhong/xv6-file-system-visualizer/master/fs/good.img">
         <label for="file-choice2">good.img</label>
 
@@ -35,14 +33,14 @@
 
 <div id="block-inode">
     <div id="grid">
-        <div id="block-view">
-            <h1>Blocks</h1>
-            <div class="grid-container" id="block-container"></div>
-        </div>
-
-        <div id="inode-view">
+        <div id="inode-grid">
             <h1>Inodes</h1>
             <div class="grid-container" id="inode-container"></div>
+        </div>
+
+        <div id="block-grid">
+            <h1>Blocks</h1>
+            <div class="grid-container" id="block-container"></div>
         </div>
     </div>
 

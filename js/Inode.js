@@ -49,7 +49,7 @@ class Inode extends Grid {
         const dataBlocks = Array.from(this.dataAddresses).map(i => blockList[i]);
         if (this.type === 1)
             dataBlocks.forEach(e => e.isDirectoryBlock = true);
-        else if (dataBlocks.every(e => e.isBlockAscii))
+        else if (dataBlocks.every(e => e.isBlockAscii()))
             dataBlocks.forEach(e => e.belongsToTextFile = true);
         return dataBlocks;
     }
@@ -57,22 +57,29 @@ class Inode extends Grid {
     getDetailContentDOM() {
         const node = document.createElement("div");
 
-        // basic info
-        const type = document.createElement("p");
-        type.innerText = "Type: " + this.typeName;
-        node.appendChild(type);
 
-        const size = document.createElement("p");
-        size.innerText = "Size: " + this.size;
-        node.appendChild(size);
+        // size
+        if (this.type === 1 || this.type === 2) {
+            const size = document.createElement("p");
+            size.innerText = "Size: " + this.size;
+            node.appendChild(size);
+        }
 
-        const nlink = document.createElement("p");
-        nlink.innerText = "Number of links: " + this.nlink;
-        node.appendChild(nlink);
 
-        const nblocks = document.createElement("p");
-        nlink.innerText = "Number of data blocks: " + this.dataAddresses.length;
-        node.appendChild(nblocks);
+        // nlink
+        if (this.type !== 0) {
+            const nlink = document.createElement("p");
+            nlink.innerText = "Number of links: " + this.nlink;
+            node.appendChild(nlink);
+        }
+
+
+        // nblock
+        if (this.type === 1 || this.type === 2) {
+            const nblock = document.createElement("p");
+            nblock.innerText = "Number of data blocks: " + this.dataAddresses.length;
+            node.appendChild(nblock);
+        }
 
 
         // device only
@@ -99,12 +106,13 @@ class Inode extends Grid {
             node.appendChild(dataBlock.getDetailTitleDOM());
             node.appendChild(dataBlock.getDetailContentDOM());
         }
+
         return node;
     }
 
     getDetailTitleDOM() {
         const node = document.createElement("h3");
-        node.innerText = "Inode " + this.inum;
+        node.innerText = `Inode ${this.inum}: ${this.typeName}`;
         return node;
     }
 }

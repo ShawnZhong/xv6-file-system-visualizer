@@ -11,12 +11,14 @@ class Block extends Grid {
         this.dataView = new DataView(image, Config.blockSize * blockNumber, Config.blockSize);
         this.uint8Array = new Uint8Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
         this.uint32Array = new Uint32Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
-
-        this.isBlockAscii = this.uint8Array.every(e => e < 128);
     }
 
     getType() {
         // implemented by child class
+    }
+
+    isBlockAscii() {
+        return this.uint8Array.every(e => e < 128);
     }
 
     getClassName() {
@@ -28,7 +30,7 @@ class Block extends Grid {
             return this.getEntriesDOM();
 
         if (this.belongsToTextFile) {
-            const node = document.createElement("div");
+            const node = document.createElement("pre");
             node.innerText = new TextDecoder("utf-8").decode(this.dataView);
             return node;
         }
@@ -72,11 +74,11 @@ class SuperBlock extends Block {
         node.appendChild(size);
 
         const nblocks = document.createElement("p");
-        nblocks.innerText = "Number of blockList: " + this.nblocks;
+        nblocks.innerText = "Number of blocks: " + this.nblocks;
         node.appendChild(nblocks);
 
         const ninodes = document.createElement("p");
-        ninodes.innerText = "Number of inodeList: " + this.ninodes;
+        ninodes.innerText = "Number of inodes: " + this.ninodes;
         node.appendChild(ninodes);
 
         return node;

@@ -95,5 +95,5 @@
 }
 
 #inode-container > .device-inode:before {
-    content: "D";
+    content: "S";
 }

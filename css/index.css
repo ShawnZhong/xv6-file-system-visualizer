@@ -4,24 +4,24 @@ body {
 
 pre {
     white-space: pre-wrap;
-    tab-size: 12;
+    tab-size: 6;
 }
 
 #block-inode {
     display: flex;
 }
 
-#detail {
-    flex: 30%;
-    max-height: -webkit-fill-available;
-    overflow: scroll;
+#grid {
+    flex: 60%;
 }
 
-#grid {
-    flex: 70%;
+#detail {
+    flex: 40%;
 }
 
 
 #detail-content {
-    word-break: break-all;
+    word-break: break-word;
+    max-height: 100vh;
+    overflow: scroll;
 }
