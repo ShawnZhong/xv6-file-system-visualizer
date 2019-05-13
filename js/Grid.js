@@ -2,27 +2,25 @@ class GridUtils {
     static detailContentDOM = document.getElementById("detail-content");
     static detailTitleDOM = document.getElementById("detail-title");
 
-    static hoveredElem;
-    static selectedElem;
+    static activeElem;
     static relatedElems;
 
     static enableHover = true;
 
 
-    static clear() {
-        if (GridUtils.hoveredElem)
-            GridUtils.hoveredElem.gridDOM.classList.remove("hovered");
-        if (GridUtils.selectedElem)
-            GridUtils.selectedElem.gridDOM.classList.remove("selected");
+    static setActive(activeElem) {
+        if (GridUtils.activeElem)
+            GridUtils.activeElem.gridDOM.classList.remove("hovered", "selected");
         if (GridUtils.relatedElems)
-            GridUtils.relatedElems.forEach(e => e.classList.remove("related"))
-    }
+            GridUtils.relatedElems.forEach(e => e.classList.remove("related"));
 
-    static focus() {
-        GridUtils.detailTitleDOM.innerText = GridUtils.hoveredElem.getDetailTitleDOM().innerText;
+        GridUtils.activeElem = activeElem;
+
+        GridUtils.detailTitleDOM.innerText = GridUtils.activeElem.getDetailTitleDOM().innerText;
         GridUtils.detailContentDOM.innerHTML = '';
-        GridUtils.detailContentDOM.appendChild(GridUtils.hoveredElem.detailContentDOM);
+        GridUtils.detailContentDOM.appendChild(GridUtils.activeElem.detailContentDOM);
 
+        GridUtils.relatedElems = GridUtils.activeElem.getRelatedGrid().map(e => e.gridDOM);
         GridUtils.relatedElems.forEach(e => e.classList.add("related"));
     }
 }
@@ -78,19 +76,13 @@ class Grid {
 
         this.gridDOM.onmouseover = () => {
             if (!GridUtils.enableHover) return;
-            GridUtils.clear();
-            GridUtils.hoveredElem = this;
-            GridUtils.relatedElems = this.getRelatedGrid().map(e => e.gridDOM);
-            GridUtils.hoveredElem.gridDOM.classList.add("hovered");
-            GridUtils.focus();
+            GridUtils.setActive(this);
+            GridUtils.activeElem.gridDOM.classList.add("hovered");
         };
         this.gridDOM.onclick = () => {
-            GridUtils.clear();
-            GridUtils.selectedElem = this;
-            GridUtils.relatedElems = this.getRelatedGrid().map(e => e.gridDOM);
             GridUtils.enableHover = !GridUtils.enableHover;
-            GridUtils.selectedElem.gridDOM.classList.add("selected");
-            GridUtils.focus();
+            GridUtils.setActive(this);
+            GridUtils.activeElem.gridDOM.classList.add(GridUtils.enableHover ? "hovered" : "selected");
         };
 
         return this.gridDOM;
