@@ -183,8 +183,9 @@ class InodeBlock extends Block {
     }
 
     getRelatedDOM() {
-        return [...Array(Config.numberOfInodesPerBlock).keys()]
-            .map(i => i + Config.numberOfInodesPerBlock * (this.blockNumber - 2))
+        const numberOfInodesPerBlock = Config.blockSize / Config.inodeSize;
+        return [...Array(numberOfInodesPerBlock).keys()]
+            .map(i => i + numberOfInodesPerBlock * (this.blockNumber - 2))
             .map(i => inodeList[i].gridDOM);
     }
 }

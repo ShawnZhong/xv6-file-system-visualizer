@@ -1,8 +1,7 @@
-let Config = {};
+const Config = {
+    entrySize: 16,
+    inodeSize: 64,
+    blockSize: 512,
+    numberOfDirectAddress: 12
+};
 
-Config.entrySize = 16;
-Config.inodeSize = 64;
-Config.blockSize = 512;
-Config.numberOfDirectAddress = 12;
-
-Config.numberOfInodesPerBlock = Config.blockSize / Config.inodeSize;
