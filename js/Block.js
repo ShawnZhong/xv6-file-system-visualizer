@@ -4,7 +4,7 @@ let blockList;
 class BlockUtils {
     static render() {
         Block.container.innerHTML = "";
-        blockList.forEach(e => Block.container.appendChild(e.getGridDOM()));
+        blockList.forEach(e => Block.container.appendChild(e.gridDOM));
     }
 
     static initBlockList() {
@@ -33,6 +33,7 @@ class Block extends Grid {
 
     belongsToTextFile = false;
     isDirectoryBlock = false;
+    belongsToInum = -1;
 
     constructor(blockNumber) {
         super();
@@ -41,15 +42,17 @@ class Block extends Grid {
         this.dataView = new DataView(image, Config.blockSize * blockNumber, Config.blockSize);
         this.uint8Array = new Uint8Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
         this.uint32Array = new Uint32Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
+
+        this.initGridDOM();
     }
 
-
-    getType() {
-        // implemented by child class
-    }
 
     isBlockAscii() {
         return this.uint8Array.every(e => e < 128);
+    }
+
+    getType() {
+        // implemented by child class
     }
 
     getClassName() {
@@ -80,6 +83,11 @@ class Block extends Grid {
         node.innerText = `Block ${this.blockNumber}: ${this.getType()}`;
         return node;
     }
+
+    getRelatedGrid() {
+        if (this.belongsToInum !== -1) return [inodeList[this.belongsToInum]];
+        return super.getRelatedGrid();
+    }
 }
 
 
@@ -91,6 +99,8 @@ class SuperBlock extends Block {
         this.nblocks = this.dataView.getUint32(4, true);
         this.ninodes = this.dataView.getUint32(8, true);
         this.ninodeblocks = this.ninodes * Config.inodeSize / Config.blockSize;
+
+        this.gridDOM.onmouseover();
     }
 
     getType() {
@@ -112,12 +122,6 @@ class SuperBlock extends Block {
         ninodes.innerText = "Number of inodes: " + this.ninodes;
         node.appendChild(ninodes);
 
-        return node;
-    }
-
-    getGridDOM() {
-        const node = super.getGridDOM();
-        node.onmouseover();
         return node;
     }
 }

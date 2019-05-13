@@ -2,36 +2,47 @@ class GridUtils {
     static detailContentDOM = document.getElementById("detail-content");
     static detailTitleDOM = document.getElementById("detail-title");
 
-    static currentHovered;
-    static currentSelectedItem;
+    static hoveredElem;
+    static selectedElem;
+    static relatedElems;
 
     static enableHover = true;
 
 
-    static showDetail(elem) {
-        GridUtils.detailTitleDOM.innerText = elem.getDetailTitleDOM().innerText;
+    static showDetail() {
+        GridUtils.detailTitleDOM.innerText = GridUtils.hoveredElem.getDetailTitleDOM().innerText;
         GridUtils.detailContentDOM.innerHTML = '';
-        GridUtils.detailContentDOM.appendChild(elem.getDetailContentDOM());
+        GridUtils.detailContentDOM.appendChild(GridUtils.hoveredElem.getDetailContentDOM());
     }
 
     static removeHovered() {
-        if (GridUtils.currentHovered)
-            GridUtils.currentHovered.gridDOM.classList.remove("hovered");
+        if (GridUtils.hoveredElem)
+            GridUtils.hoveredElem.gridDOM.classList.remove("hovered");
     }
 
     static removeSelected() {
-        if (GridUtils.currentSelectedItem)
-            GridUtils.currentSelectedItem.gridDOM.classList.remove("selected");
+        if (GridUtils.selectedElem)
+            GridUtils.selectedElem.gridDOM.classList.remove("selected");
+    }
+
+    static removeRelated() {
+        if (GridUtils.relatedElems)
+            GridUtils.relatedElems.forEach(e => e.classList.remove("related"))
     }
 
     static setHovered(elem) {
         if (!GridUtils.enableHover) return;
         GridUtils.removeHovered();
+        GridUtils.removeRelated();
+
+        GridUtils.hoveredElem = elem;
+        GridUtils.relatedElems = elem.getRelatedGrid().map(e => e.gridDOM);
 
         elem.gridDOM.classList.add("hovered");
-        GridUtils.currentHovered = elem;
+        GridUtils.relatedElems.forEach(e => e.classList.add("related"));
 
-        GridUtils.showDetail(elem);
+
+        GridUtils.showDetail();
     }
 
     static setSelected(elem) {
@@ -40,16 +51,18 @@ class GridUtils {
             GridUtils.removeSelected();
             return;
         }
-        
-        GridUtils.removeSelected();
 
-        elem.gridDOM.classList.add("selected");
-        GridUtils.currentSelectedItem = elem;
+        GridUtils.removeSelected();
+        GridUtils.removeHovered();
+        GridUtils.removeRelated();
 
         GridUtils.enableHover = false;
-        GridUtils.removeHovered();
+        elem.gridDOM.classList.add("selected");
 
-        GridUtils.showDetail(elem);
+
+        GridUtils.selectedElem = elem;
+
+        GridUtils.showDetail();
     }
 }
 
@@ -85,10 +98,19 @@ class Grid {
         // implemented by child class
     }
 
+
+    /**
+     * @returns {Grid[]}
+     */
+    getRelatedGrid() {
+        return [];
+    }
+
     /**
      * @returns {HTMLDivElement} an element in the grid
      */
-    getGridDOM() {
+    initGridDOM() {
+        if (this.gridDOM) return this.gridDOM;
         this.gridDOM = document.createElement("div");
         this.gridDOM.classList.add(this.getClassName());
 
