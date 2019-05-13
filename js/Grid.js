@@ -28,8 +28,6 @@ class GridUtils {
 
 
     static setHovered() {
-        if (!GridUtils.enableHover) return;
-
         GridUtils.hoveredElem.gridDOM.classList.add("hovered");
         GridUtils.focus();
     }
@@ -93,6 +91,7 @@ class Grid {
         this.gridDOM.classList.add(this.getClassName());
 
         this.gridDOM.onmouseover = () => {
+            if (!GridUtils.enableHover) return;
             GridUtils.clear();
             GridUtils.hoveredElem = this;
             GridUtils.relatedElems = this.getRelatedGrid().map(e => e.gridDOM);

@@ -40,6 +40,12 @@
 </form>
 
 <div id="block-inode">
+
+    <div id="file-tree">
+        <h1>File Tree</h1>
+        <pre id="file-tree-content"></pre>
+    </div>
+
     <div id="grid">
         <div id="inode-grid">
             <h1>Inodes</h1>
@@ -52,17 +58,15 @@
         </div>
     </div>
 
-    <div id="info">
-        <div id="detail">
-            <h1 id="detail-title"></h1>
-            <div id="detail-content"></div>
-        </div>
 
-        <div id="file-tree">
-            <h1>File Tree</h1>
-            <pre id="file-tree-content"></pre>
-        </div>
+    <!--    <div id="info">-->
+    <div id="detail">
+        <h1 id="detail-title"></h1>
+        <div id="detail-content"></div>
     </div>
+
+
+    <!--    </div>-->
 
 
 </div>
@@ -76,7 +80,7 @@
 <script src="js/index.js"></script>
 
 <script>
-    document.getElementById('file-choice1').click();
+    document.getElementById('file-choice3').click();
     document.getElementById('file-upload').onclick = () => document.getElementById('file-choice0').click();
 </script>
 </body>
