@@ -1,16 +1,23 @@
-class Block {
-    type = "block";
+class Block extends Grid {
+    container = blockContainer;
+
     belongsToTextFile = false;
     isDirectoryBlock = false;
 
     constructor(blockNumber) {
+        super();
         this.blockNumber = blockNumber;
 
-        this.block = new DataView(image, Config.blockSize * blockNumber, Config.blockSize);
-        this.uint8Array = new Uint8Array(this.block.buffer, this.block.byteOffset, this.block.byteLength);
-        this.uint32Array = new Uint32Array(this.block.buffer, this.block.byteOffset, this.block.byteLength);
+        this.dataView = new DataView(image, Config.blockSize * blockNumber, Config.blockSize);
+        this.uint8Array = new Uint8Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
+        this.uint32Array = new Uint32Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
 
         this.isBlockAscii = this.uint8Array.every(e => e < 128);
+        this.className = this.getType().toLowerCase().replace(' ', '-');
+    }
+
+    getType() {
+        // implemented by child class
     }
 
     getHumanReadableDataDOM(innerHTML) {
@@ -20,7 +27,7 @@ class Block {
         else if (this.isDirectoryBlock)
             node.innerHTML = this.getEntriesDOM().innerHTML;
         else if (this.belongsToTextFile)
-            node.innerHTML = new TextDecoder("utf-8").decode(this.block);
+            node.innerText = new TextDecoder("utf-8").decode(this.dataView);
         else
             return;
         return node;
@@ -34,19 +41,8 @@ class Block {
         return node;
     }
 
-    getBlockSummaryDOM() {
-        const blockSummary = document.createElement("h4");
-        blockSummary.innerText = `Block ${this.blockNumber}: ${this.type}`;
-
+    getDetailContentDOM() {
         const node = document.createElement("div");
-        node.appendChild(blockSummary);
-        return node;
-
-    }
-
-    getDetailDOM() {
-        const node = document.createElement("div");
-        node.appendChild(this.getBlockSummaryDOM());
 
         const humanReadableDataDOM = this.getHumanReadableDataDOM();
         if (humanReadableDataDOM)
@@ -57,43 +53,49 @@ class Block {
         return node;
     }
 
-    renderGrid() {
-        const node = document.createElement("div");
-        node.classList.add(this.type.toLowerCase().replace(' ', '-'));
-        node.onmouseover = () => {
-            detailContentDOM.innerHTML = this.getDetailDOM().innerHTML;
-            node.classList.add("hover");
-        };
-
-        node.onmouseleave = () => node.classList.remove("hover");
-        blockContainerDOM.appendChild(node);
+    getDetailTitleDOM() {
+        const node = document.createElement("h4");
+        node.innerText = `Block ${this.blockNumber}: ${this.getType()}`;
+        return node;
     }
-
-
 }
 
 
 class SuperBlock extends Block {
-    type = "Super Block";
-
     constructor(blockNumber) {
         super(blockNumber);
 
-        this.size = this.block.getUint32(0, true);
-        this.nblocks = this.block.getUint32(4, true);
-        this.ninodes = this.block.getUint32(8, true);
+        this.size = this.dataView.getUint32(0, true);
+        this.nblocks = this.dataView.getUint32(4, true);
+        this.ninodes = this.dataView.getUint32(8, true);
         this.ninodeblocks = this.ninodes * Config.inodeSize / Config.blockSize;
     }
 
+    getType() {
+        return "Super Block";
+    }
+
     getHumanReadableDataDOM() {
-        const innerHTML = `${this.size} + ${this.nblocks} + ${this.ninodes}`;
-        return super.getHumanReadableDataDOM(innerHTML);
+        const metadata = document.createElement("div");
+
+        const size = document.createElement("p");
+        size.innerText = "Image size: " + this.size;
+        metadata.appendChild(size);
+
+        const nblocks = document.createElement("p");
+        nblocks.innerText = "Number of blockList: " + this.nblocks;
+        metadata.appendChild(nblocks);
+
+        const ninodes = document.createElement("p");
+        ninodes.innerText = "Number of inodeList: " + this.ninodes;
+        metadata.appendChild(ninodes);
+
+
+        return super.getHumanReadableDataDOM(metadata.innerHTML);
     }
 }
 
 class BitmapBlock extends Block {
-    type = "Bitmap Block";
-
     getMachineReadableDataDOM() {
         const node = document.createElement("pre");
         node.innerHTML = Array.from(this.uint8Array)
@@ -102,28 +104,37 @@ class BitmapBlock extends Block {
         return node;
     }
 
+    getType() {
+        return "Bitmap Block";
+    }
+
 }
 
 class UnusedBlock extends Block {
-    type = "Unused Block";
+    getType() {
+        return "Unused Block";
+    }
 }
 
 class InodeBlock extends Block {
-    type = "Inode Block";
+    getType() {
+        return "Inode Block";
+    }
 }
 
 class DataBlock extends Block {
-    type = "Data Block";
-
+    getType() {
+        return "Data Block";
+    }
 
     getEntries() {
         let entries = {};
         for (let i = 0; i < Config.blockSize / Config.entrySize; i++) {
-            const inum = this.block.getUint16(Config.entrySize * i, true);
+            const inum = this.dataView.getUint16(Config.entrySize * i, true);
             if (inum === 0) continue;
 
-            const nameOffset = this.block.byteOffset + Config.entrySize * i + 2;
-            const nameArray = new Uint8Array(this.block.buffer, nameOffset, Config.entrySize - 2);
+            const nameOffset = this.dataView.byteOffset + Config.entrySize * i + 2;
+            const nameArray = new Uint8Array(this.dataView.buffer, nameOffset, Config.entrySize - 2);
             const name = new TextDecoder("utf-8").decode(nameArray);
 
             entries[name] = inum;

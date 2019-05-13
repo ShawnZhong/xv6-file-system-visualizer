@@ -1,7 +1,10 @@
-class Inode {
+class Inode extends Grid {
+    container = inodeContainer;
+
     constructor(inum) {
+        super();
         this.inum = inum;
-        this.inode = new DataView(image, Config.blockSize * 2 + inum * Config.inodeSize);
+        this.inode = new DataView(image, Config.blockSize * 2 + inum * Config.inodeSize, Config.inodeSize);
 
         this.type = this.inode.getUint16(0, true);
         this.major = this.inode.getUint16(2, true);
@@ -14,6 +17,7 @@ class Inode {
         this.typeName = this.getTypeName();
         this.dataBlocks = this.getDataBlocks();
 
+        this.className = this.typeName.toLowerCase() + "-inode";
     }
 
     getTypeName() {
@@ -31,7 +35,7 @@ class Inode {
 
         // indirect addresses
         if (numberOfAddresses > Config.numberOfDirectAddress) {
-            const indirectBlock = new Block(this.indirectAddress).block;
+            const indirectBlock = blockList[this.indirectAddress].dataView;
             for (let i = 0; i < numberOfAddresses - Config.numberOfDirectAddress - 1; i++)
                 addresses[Config.numberOfDirectAddress + i] = indirectBlock.getUint32(i * 4, true);
         }
@@ -40,7 +44,7 @@ class Inode {
     }
 
     getDataBlocks() {
-        const dataBlocks = Array.from(this.dataAddresses).map(i => blocks[i]);
+        const dataBlocks = Array.from(this.dataAddresses).map(i => blockList[i]);
         if (this.type === 1)
             dataBlocks.forEach(e => e.isDirectoryBlock = true);
         else if (dataBlocks.every(e => e.isBlockAscii))
@@ -48,39 +52,28 @@ class Inode {
         return dataBlocks;
     }
 
-    getDataBlocksDOM() {
+    getDetailContentDOM() {
         const node = document.createElement("div");
 
-        const title = document.createElement("h2");
-        title.innerText = "Data Blocks";
-        node.appendChild(title);
-
-        if (this.dataAddresses.length !== 0) {
-            this.dataBlocks.map(e => e.getDetailDOM()).forEach(e => node.appendChild(e));
-        } else {
-            const noDataBlocks = document.createElement("p");
-            noDataBlocks.innerText = "This inode does not have any data blocks";
-            node.appendChild(noDataBlocks);
-        }
-        return node;
-    }
-
-
-    getInodeSummaryDOM() {
-        const node = document.createElement("div");
-
-        const title = document.createElement("h2");
-        title.innerText = "Inode Summary";
-        node.appendChild(title);
-
+        // basic info
         const type = document.createElement("p");
         type.innerText = "Type: " + this.typeName;
         node.appendChild(type);
+
+        const size = document.createElement("p");
+        size.innerText = "Size: " + this.size;
+        node.appendChild(size);
 
         const nlink = document.createElement("p");
         nlink.innerText = "Number of links: " + this.nlink;
         node.appendChild(nlink);
 
+        const nblocks = document.createElement("p");
+        nlink.innerText = "Number of data blocks: " + this.dataAddresses.length;
+        node.appendChild(nblocks);
+
+
+        // device only
         if (this.type === 3) {
             const major = document.createElement("p");
             major.innerText = "Major device number: " + this.major;
@@ -92,30 +85,24 @@ class Inode {
             node.appendChild(minor);
         }
 
+        // data addresses
         if (this.dataAddresses.length !== 0) {
             const dataAddresses = document.createElement("p");
             dataAddresses.innerText = "Data block addresses: " + this.dataAddresses.join(", ");
             node.appendChild(dataAddresses);
         }
 
+        // data blocks
+        for (let dataBlock of this.dataBlocks) {
+            node.appendChild(dataBlock.getDetailTitleDOM());
+            node.appendChild(dataBlock.getDetailContentDOM());
+        }
         return node;
     }
 
-    getDetailDOM() {
-        const node = document.createElement("div");
-        node.appendChild(this.getInodeSummaryDOM());
-        node.appendChild(this.getDataBlocksDOM());
+    getDetailTitleDOM() {
+        const node = document.createElement("h3");
+        node.innerText = "Inode " + this.inum;
         return node;
-    }
-
-    renderGrid() {
-        const node = document.createElement("div");
-        node.classList.add(this.typeName.toLowerCase() + "-inode");
-        node.onmouseover = () => {
-            detailContentDOM.innerHTML = this.getDetailDOM().innerHTML;
-            node.classList.add("hover");
-        };
-        node.onmouseleave = () => node.classList.remove("hover");
-        inodeContainerDOM.appendChild(node);
     }
 }

@@ -1,0 +1,48 @@
+const inodeContainer = document.getElementById("inode-container");
+const blockContainer = document.getElementById("block-container");
+const detailContent = document.getElementById("detail-content");
+const detailTitle = document.getElementById("detail-title");
+
+let currentHoveredItem;
+
+class Grid {
+    /**
+     * @type {HTMLBaseElement}
+     */
+    container;
+
+    /**
+     * @type {string}
+     */
+    className;
+
+    /**
+     * @returns {HTMLBaseElement}
+     */
+    getDetailContentDOM() {
+        // implemented by child class
+    }
+
+    /**
+     * @returns {HTMLBaseElement}
+     */
+    getDetailTitleDOM() {
+        // implemented by child class
+    }
+
+    renderGrid() {
+        const node = document.createElement("div");
+        node.classList.add(this.className);
+        node.onmouseover = () => {
+            if (currentHoveredItem)
+                currentHoveredItem.classList.remove("selected");
+            detailTitle.innerText = this.getDetailTitleDOM().innerText;
+            detailContent.innerHTML = this.getDetailContentDOM().innerHTML;
+            node.classList.add("selected");
+            currentHoveredItem = node;
+        };
+
+        this.container.appendChild(node);
+    }
+
+}

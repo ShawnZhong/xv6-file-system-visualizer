@@ -1,12 +1,8 @@
-const blockContainerDOM = document.getElementById("block-container");
-const inodeContainerDOM = document.getElementById("inode-container");
-const detailContentDOM = document.getElementById("detail-content");
-
-
 let image;
 let superBlock;
-let inodes;
-let blocks;
+
+let inodeList;
+let blockList;
 
 async function main(file) {
     image = await loadImage(file);
@@ -31,30 +27,30 @@ async function loadImage(file) {
 
 function initBlocks() {
     superBlock = new SuperBlock(1);
-    blocks = new Array(superBlock.nblocks);
+    blockList = new Array(superBlock.nblocks);
 
-    blocks[0] = new UnusedBlock(0);
-    blocks[1] = superBlock;
+    blockList[0] = new UnusedBlock(0);
+    blockList[1] = superBlock;
 
     let i = 2;
 
     while (i < 2 + superBlock.ninodeblocks)
-        blocks[i] = new InodeBlock(i++);
+        blockList[i] = new InodeBlock(i++);
 
-    blocks[i] = new UnusedBlock(i++);
-    blocks[i] = new BitmapBlock(i++);
+    blockList[i] = new UnusedBlock(i++);
+    blockList[i] = new BitmapBlock(i++);
 
     while (i < superBlock.nblocks)
-        blocks[i] = new DataBlock(i++);
+        blockList[i] = new DataBlock(i++);
 }
 
 function initInodes() {
-    inodes = Array.from(new Array(superBlock.ninodes).keys(), i => new Inode(i));
+    inodeList = Array.from(new Array(superBlock.ninodes).keys(), i => new Inode(i));
 }
 
 function renderGrid() {
-    inodeContainerDOM.innerHTML = "";
-    blockContainerDOM.innerHTML = "";
-    inodes.forEach(e => e.renderGrid());
-    blocks.forEach(e => e.renderGrid());
+    inodeContainer.innerHTML = "";
+    blockContainer.innerHTML = "";
+    inodeList.forEach(e => e.renderGrid());
+    blockList.forEach(e => e.renderGrid());
 }

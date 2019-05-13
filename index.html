@@ -5,16 +5,12 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <!--    <link crossorigin="anonymous"-->
-    <!--          href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"-->
-    <!--          integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" rel="stylesheet">-->
     <link href="css/index.css" rel="stylesheet">
     <link href="css/grid.css" rel="stylesheet">
     <title>xv6 File System Visualizer</title>
 </head>
 
 <body>
-
 <form>
     <fieldset>
         <legend>Please select a xv6 file system image:</legend>
@@ -37,8 +33,7 @@
     </fieldset>
 </form>
 
-
-<div id="body">
+<div id="block-inode">
     <div id="grid">
         <div id="block-view">
             <h1>Blocks</h1>
@@ -52,12 +47,13 @@
     </div>
 
     <div id="detail">
-        <h1>Detail</h1>
+        <h1 id="detail-title">Detail</h1>
         <div id="detail-content"></div>
     </div>
 </div>
 
 <script src="js/Config.js"></script>
+<script src="js/Grid.js"></script>
 <script src="js/Block.js"></script>
 <script src="js/Inode.js"></script>
 <script src="js/index.js"></script>

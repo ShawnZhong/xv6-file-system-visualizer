@@ -12,8 +12,9 @@
     border: solid 1px white;
 }
 
-.grid-container > div.hover {
-    border-color: black;
+.grid-container > div.selected {
+    box-shadow: 0 0 5px black;
+    z-index: 0;
 }
 
 #block-container > .super-block {
