@@ -7,6 +7,11 @@ pre {
     tab-size: 6;
 }
 
+pre.text {
+    word-break: break-all;
+}
+
+
 @media screen and (min-width: 640px) {
     #content {
         display: flex;
@@ -28,12 +33,6 @@ pre {
 
 #detail-content {
     word-break: break-word;
-    height: 85vh;
-    overflow: scroll;
-}
-
-pre.text {
-    word-break: break-all;
     height: 85vh;
     overflow: scroll;
 }
