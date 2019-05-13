@@ -1,7 +1,6 @@
 class FileTree {
-    static fileTreeDOM = document.getElementById("file-tree-content");
-
     static render() {
+        this.fileTreeDOM = document.getElementById("file-tree-content");
         this.fileTreeDOM.innerHTML = '';
         inodeList[1].pathList.push('/');
         this.traverse();

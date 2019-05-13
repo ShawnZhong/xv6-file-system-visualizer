@@ -1,11 +1,10 @@
 let inodeList;
 
 class InodeUtils {
-    static container = document.getElementById("inode-container");
-
     static render() {
-        InodeUtils.container.innerHTML = "";
-        inodeList.forEach(e => InodeUtils.container.appendChild(e.initGridDOM()));
+        const container = document.getElementById("inode-container");
+        container.innerHTML = "";
+        inodeList.forEach(e => container.appendChild(e.initGridDOM()));
     }
 
     static initInodeList() {

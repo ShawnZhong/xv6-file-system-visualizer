@@ -1,8 +1,8 @@
-class Config {
-    static entrySize = 16;
-    static inodeSize = 64;
-    static blockSize = 512;
-    static numberOfDirectAddress = 12;
+let Config = {};
 
-    static numberOfInodesPerBlock = Config.blockSize / Config.inodeSize;
-}
+Config.entrySize = 16;
+Config.inodeSize = 64;
+Config.blockSize = 512;
+Config.numberOfDirectAddress = 12;
+
+Config.numberOfInodesPerBlock = Config.blockSize / Config.inodeSize;

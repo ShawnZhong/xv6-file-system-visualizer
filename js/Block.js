@@ -1,13 +1,12 @@
 let superBlock;
 let blockList;
+let bitmap;
 
 class BlockUtils {
-    static bitmap;
-    static container = document.getElementById("block-container");
-
     static render() {
-        BlockUtils.container.innerHTML = "";
-        blockList.forEach(e => BlockUtils.container.appendChild(e.initGridDOM()));
+        const container = document.getElementById("block-container");
+        container.innerHTML = "";
+        blockList.forEach(e => container.appendChild(e.initGridDOM()));
         superBlock.gridDOM.onmouseover();
     }
 
@@ -27,15 +26,15 @@ class BlockUtils {
 
         blockList.push(new UnusedBlock(i++));
 
-        BlockUtils.bitmap = new BitmapBlock(i++);
-        blockList.push(BlockUtils.bitmap);
+        bitmap = new BitmapBlock(i++);
+        blockList.push(bitmap);
 
         while (i < superBlock.nblocks)
             blockList.push(BlockUtils.isDataBlockEmpty(i) ? new UnusedBlock(i++) : new DataBlock(i++));
     }
 
     static isDataBlockEmpty(blockNumber) {
-        return (BlockUtils.bitmap.dataView.getUint8(blockNumber / 8) & (1 << blockNumber % 8)) === 0;
+        return (bitmap.dataView.getUint8(blockNumber / 8) & (1 << blockNumber % 8)) === 0;
     }
 }
 
@@ -73,7 +72,7 @@ class Block extends Grid {
 
 
 class SuperBlock extends Block {
-    type = "Super Block";
+
 
     constructor(blockNumber) {
         super(blockNumber);
@@ -82,6 +81,8 @@ class SuperBlock extends Block {
         this.nblocks = this.dataView.getUint32(4, true);
         this.ninodes = this.dataView.getUint32(8, true);
         this.ninodeblocks = this.ninodes * Config.inodeSize / Config.blockSize;
+
+        this.type = "Super Block";
     }
 
 
@@ -105,7 +106,10 @@ class SuperBlock extends Block {
 }
 
 class BitmapBlock extends Block {
-    type = "Bitmap Block";
+    constructor(blockNumber) {
+        super(blockNumber);
+        this.type = "Bitmap Block";
+    }
 
     getDetailContentDOM() {
         const node = document.createElement("pre");
@@ -117,9 +121,12 @@ class BitmapBlock extends Block {
 }
 
 class DataBlock extends Block {
-    type = "Data Block";
-    belongsToTextFile = false;
-    isDirectoryBlock = false;
+    constructor(blockNumber) {
+        super(blockNumber);
+        this.type = "Data Block";
+        this.belongsToTextFile = false;
+        this.isDirectoryBlock = false;
+    }
 
 
     isBlockAscii() {
@@ -169,7 +176,10 @@ class DataBlock extends Block {
 
 
 class InodeBlock extends Block {
-    type = "Inode Block";
+    constructor(blockNumber) {
+        super(blockNumber);
+        this.type = "Inode Block";
+    }
 
     getRelatedGrid() {
         return [...Array(Config.numberOfInodesPerBlock).keys()]
@@ -179,5 +189,8 @@ class InodeBlock extends Block {
 }
 
 class UnusedBlock extends DataBlock {
-    type = "Unused Block";
+    constructor(blockNumber) {
+        super(blockNumber);
+        this.type = "Unused Block";
+    }
 }
