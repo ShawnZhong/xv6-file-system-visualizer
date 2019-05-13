@@ -13,42 +13,31 @@ class Block extends Grid {
         this.uint32Array = new Uint32Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
 
         this.isBlockAscii = this.uint8Array.every(e => e < 128);
-        this.className = this.getType().toLowerCase().replace(' ', '-');
     }
 
     getType() {
         // implemented by child class
     }
 
-    getHumanReadableDataDOM(innerHTML) {
-        const node = document.createElement("div");
-        if (innerHTML)
-            node.innerHTML = innerHTML;
-        else if (this.isDirectoryBlock)
-            node.innerHTML = this.getEntriesDOM().innerHTML;
-        else if (this.belongsToTextFile)
-            node.innerText = new TextDecoder("utf-8").decode(this.dataView);
-        else
-            return;
-        return node;
-    }
-
-    getMachineReadableDataDOM() {
-        const node = document.createElement("pre");
-        node.innerHTML = Array.from(this.uint32Array)
-            .map(e => e.toString(16).padStart(8, '0'))
-            .join(", \t");
-        return node;
+    getClassName() {
+        return this.getType().toLowerCase().replace(' ', '-');
     }
 
     getDetailContentDOM() {
-        const node = document.createElement("div");
+        if (this.isDirectoryBlock)
+            return this.getEntriesDOM();
 
-        const humanReadableDataDOM = this.getHumanReadableDataDOM();
-        if (humanReadableDataDOM)
-            node.appendChild(humanReadableDataDOM);
-        else
-            node.appendChild(this.getMachineReadableDataDOM());
+        if (this.belongsToTextFile) {
+            const node = document.createElement("div");
+            node.innerText = new TextDecoder("utf-8").decode(this.dataView);
+            return node;
+        }
+
+
+        const node = document.createElement("pre");
+        node.innerText = Array.from(this.uint32Array)
+            .map(e => e.toString(16).padStart(8, '0'))
+            .join(", \t");
 
         return node;
     }
@@ -75,28 +64,27 @@ class SuperBlock extends Block {
         return "Super Block";
     }
 
-    getHumanReadableDataDOM() {
-        const metadata = document.createElement("div");
+    getDetailContentDOM() {
+        const node = document.createElement("div");
 
         const size = document.createElement("p");
         size.innerText = "Image size: " + this.size;
-        metadata.appendChild(size);
+        node.appendChild(size);
 
         const nblocks = document.createElement("p");
         nblocks.innerText = "Number of blockList: " + this.nblocks;
-        metadata.appendChild(nblocks);
+        node.appendChild(nblocks);
 
         const ninodes = document.createElement("p");
         ninodes.innerText = "Number of inodeList: " + this.ninodes;
-        metadata.appendChild(ninodes);
+        node.appendChild(ninodes);
 
-
-        return super.getHumanReadableDataDOM(metadata.innerHTML);
+        return node;
     }
 }
 
 class BitmapBlock extends Block {
-    getMachineReadableDataDOM() {
+    getDetailContentDOM() {
         const node = document.createElement("pre");
         node.innerHTML = Array.from(this.uint8Array)
             .map(e => e.toString(2).padStart(8, '0'))

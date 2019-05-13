@@ -16,13 +16,15 @@ class Inode extends Grid {
         this.dataAddresses = this.getAddresses();
         this.typeName = this.getTypeName();
         this.dataBlocks = this.getDataBlocks();
-
-        this.className = this.typeName.toLowerCase() + "-inode";
     }
 
     getTypeName() {
         if (this.type > 3) return "Unknown";
         return ["Unused", "Directory", "File", "Device"][this.type];
+    }
+
+    getClassName() {
+        return this.typeName.toLowerCase() + "-inode";
     }
 
     getAddresses() {

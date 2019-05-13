@@ -12,11 +12,6 @@ class Grid {
     container;
 
     /**
-     * @type {string}
-     */
-    className;
-
-    /**
      * @returns {HTMLBaseElement}
      */
     getDetailContentDOM() {
@@ -30,18 +25,25 @@ class Grid {
         // implemented by child class
     }
 
+    /**
+     * @return  {string}
+     */
+    getClassName() {
+        // implemented by child class
+    }
+
     renderGrid() {
         const node = document.createElement("div");
-        node.classList.add(this.className);
+        node.classList.add(this.getClassName());
         node.onmouseover = () => {
             if (currentHoveredItem)
                 currentHoveredItem.classList.remove("selected");
             detailTitle.innerText = this.getDetailTitleDOM().innerText;
-            detailContent.innerHTML = this.getDetailContentDOM().innerHTML;
+            detailContent.innerHTML = '';
+            detailContent.appendChild(this.getDetailContentDOM());
             node.classList.add("selected");
             currentHoveredItem = node;
         };
-
         this.container.appendChild(node);
     }
 
