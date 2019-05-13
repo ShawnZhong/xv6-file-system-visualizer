@@ -100,18 +100,6 @@ class BitmapBlock extends Block {
 
 }
 
-class UnusedBlock extends Block {
-    getType() {
-        return "Unused Block";
-    }
-}
-
-class InodeBlock extends Block {
-    getType() {
-        return "Inode Block";
-    }
-}
-
 class DataBlock extends Block {
     getType() {
         return "Data Block";
@@ -124,8 +112,9 @@ class DataBlock extends Block {
             if (inum === 0) continue;
 
             const nameOffset = this.dataView.byteOffset + Config.entrySize * i + 2;
+
             const nameArray = new Uint8Array(this.dataView.buffer, nameOffset, Config.entrySize - 2);
-            const name = new TextDecoder("utf-8").decode(nameArray);
+            const name = new TextDecoder("utf-8").decode(nameArray).replace(/\0/g, '');
 
             entries[name] = inum;
         }
@@ -138,5 +127,17 @@ class DataBlock extends Block {
         const node = document.createElement("div");
         node.innerHTML = Object.entries(entries).map(([name, inum]) => `${name} → ${inum}`).join("<br>");
         return node;
+    }
+}
+
+class UnusedBlock extends Block {
+    getType() {
+        return "Unused Block";
+    }
+}
+
+class InodeBlock extends Block {
+    getType() {
+        return "Inode Block";
     }
 }

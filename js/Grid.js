@@ -1,5 +1,6 @@
 const inodeContainer = document.getElementById("inode-container");
 const blockContainer = document.getElementById("block-container");
+
 const detailContent = document.getElementById("detail-content");
 const detailTitle = document.getElementById("detail-title");
 
@@ -46,5 +47,4 @@ class Grid {
         };
         this.container.appendChild(node);
     }
-
 }

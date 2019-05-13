@@ -15,13 +15,19 @@ pre {
     flex: 60%;
 }
 
-#detail {
+#info {
     flex: 40%;
 }
 
 
 #detail-content {
     word-break: break-word;
-    max-height: 100vh;
+    height: 35vh;
+    overflow: scroll;
+}
+
+#file-tree-content {
+    word-break: break-word;
+    height: 35vh;
     overflow: scroll;
 }

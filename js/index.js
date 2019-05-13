@@ -10,6 +10,8 @@ async function main(file) {
     initBlocks();
     initInodes();
     renderGrid();
+
+    renderFileTree();
 }
 
 async function loadImage(file) {
@@ -53,4 +55,9 @@ function renderGrid() {
     blockContainer.innerHTML = "";
     inodeList.forEach(e => e.renderGrid());
     blockList.forEach(e => e.renderGrid());
+}
+
+
+function renderFileTree() {
+    const fileTree = new FileTree().render();
 }
