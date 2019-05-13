@@ -12,7 +12,7 @@ class GridUtils {
     static showDetail() {
         GridUtils.detailTitleDOM.innerText = GridUtils.hoveredElem.getDetailTitleDOM().innerText;
         GridUtils.detailContentDOM.innerHTML = '';
-        GridUtils.detailContentDOM.appendChild(GridUtils.hoveredElem.getDetailContentDOM());
+        GridUtils.detailContentDOM.appendChild(GridUtils.hoveredElem.detailContentDOM);
     }
 
     static removeHovered() {
@@ -78,6 +78,11 @@ class Grid {
     gridDOM;
 
     /**
+     * @type {HTMLBaseElement}
+     */
+    detailContentDOM;
+
+    /**
      * @returns {HTMLBaseElement}
      */
     getDetailContentDOM() {
@@ -110,6 +115,7 @@ class Grid {
      * @returns {HTMLDivElement} an element in the grid
      */
     initGridDOM() {
+        if (!this.detailContentDOM) this.detailContentDOM = this.getDetailContentDOM();
         if (this.gridDOM) return this.gridDOM;
         this.gridDOM = document.createElement("div");
         this.gridDOM.classList.add(this.getClassName());

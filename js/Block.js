@@ -4,7 +4,8 @@ let blockList;
 class BlockUtils {
     static render() {
         Block.container.innerHTML = "";
-        blockList.forEach(e => Block.container.appendChild(e.gridDOM));
+        blockList.forEach(e => Block.container.appendChild(e.initGridDOM()));
+        superBlock.gridDOM.onmouseover();
     }
 
     static initBlockList() {
@@ -31,6 +32,7 @@ class BlockUtils {
 class Block extends Grid {
     static container = document.getElementById("block-container");
 
+    type = "Block";
     belongsToTextFile = false;
     isDirectoryBlock = false;
     belongsToInum = -1;
@@ -42,8 +44,6 @@ class Block extends Grid {
         this.dataView = new DataView(image, Config.blockSize * blockNumber, Config.blockSize);
         this.uint8Array = new Uint8Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
         this.uint32Array = new Uint32Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
-
-        this.initGridDOM();
     }
 
 
@@ -51,12 +51,8 @@ class Block extends Grid {
         return this.uint8Array.every(e => e < 128);
     }
 
-    getType() {
-        // implemented by child class
-    }
-
     getClassName() {
-        return this.getType().toLowerCase().replace(' ', '-');
+        return this.type.toLowerCase().replace(' ', '-');
     }
 
     getDetailContentDOM() {
@@ -80,7 +76,7 @@ class Block extends Grid {
 
     getDetailTitleDOM() {
         const node = document.createElement("h4");
-        node.innerText = `Block ${this.blockNumber}: ${this.getType()}`;
+        node.innerText = `Block ${this.blockNumber}: ${this.type}`;
         return node;
     }
 
@@ -92,6 +88,8 @@ class Block extends Grid {
 
 
 class SuperBlock extends Block {
+    type = "Super Block";
+
     constructor(blockNumber) {
         super(blockNumber);
 
@@ -99,13 +97,8 @@ class SuperBlock extends Block {
         this.nblocks = this.dataView.getUint32(4, true);
         this.ninodes = this.dataView.getUint32(8, true);
         this.ninodeblocks = this.ninodes * Config.inodeSize / Config.blockSize;
-
-        this.gridDOM.onmouseover();
     }
 
-    getType() {
-        return "Super Block";
-    }
 
     getDetailContentDOM() {
         const node = document.createElement("div");
@@ -127,6 +120,8 @@ class SuperBlock extends Block {
 }
 
 class BitmapBlock extends Block {
+    type = "Bitmap Block";
+
     getDetailContentDOM() {
         const node = document.createElement("pre");
         node.innerHTML = Array.from(this.uint8Array)
@@ -134,17 +129,10 @@ class BitmapBlock extends Block {
             .join(", \t");
         return node;
     }
-
-    getType() {
-        return "Bitmap Block";
-    }
-
 }
 
 class DataBlock extends Block {
-    getType() {
-        return "Data Block";
-    }
+    type = "Data Block";
 
     getEntries() {
         let entries = {};
@@ -172,13 +160,10 @@ class DataBlock extends Block {
 }
 
 class UnusedBlock extends Block {
-    getType() {
-        return "Unused Block";
-    }
+    type = "Unused Block";
+
 }
 
 class InodeBlock extends Block {
-    getType() {
-        return "Inode Block";
-    }
+    type = "Inode Block";
 }
