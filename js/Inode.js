@@ -80,8 +80,8 @@ class Inode extends Grid {
         return this.typeName.toLowerCase() + "-inode";
     }
 
-    getRelatedGrid() {
-        return this.allBlocks;
+    getRelatedDOM() {
+        return [...this.allBlocks.map(e => e.gridDOM), ...this.fileTreeDOMList];
     }
 
     getDetailContentDOM() {

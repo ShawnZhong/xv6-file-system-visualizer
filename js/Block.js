@@ -170,8 +170,8 @@ class DataBlock extends Block {
         return node;
     }
 
-    getRelatedGrid() {
-        return this.belongingInode ? [this.belongingInode] : [];
+    getRelatedDOM() {
+        return this.belongingInode ? [this.belongingInode.gridDOM, ...this.belongingInode.getRelatedDOM()] : [];
     }
 }
 
@@ -182,10 +182,10 @@ class InodeBlock extends Block {
         this.type = "Inode Block";
     }
 
-    getRelatedGrid() {
+    getRelatedDOM() {
         return [...Array(Config.numberOfInodesPerBlock).keys()]
             .map(i => i + Config.numberOfInodesPerBlock * (this.blockNumber - 2))
-            .map(i => inodeList[i]);
+            .map(i => inodeList[i].gridDOM);
     }
 }
 

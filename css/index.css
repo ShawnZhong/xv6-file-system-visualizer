@@ -49,7 +49,7 @@ pre {
     margin: 0;
 }
 
-#file-tree-content > pre.focused {
+#file-tree-content > pre.related {
     font-weight: bold;
     text-decoration: underline;
 }

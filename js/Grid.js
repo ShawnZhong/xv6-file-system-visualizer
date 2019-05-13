@@ -4,17 +4,14 @@ const detailTitleDOM = document.getElementById("detail-title");
 let enableHover = true;
 
 let activeElem;
-let relatedElems;
-let fileTreeElems;
+let relatedDOMList;
 
 class GridUtils {
     static setActive(newActiveElem) {
         if (activeElem)
             activeElem.gridDOM.classList.remove("hovered", "selected");
-        if (relatedElems)
-            relatedElems.forEach(e => e.classList.remove("related"));
-        if (fileTreeElems)
-            fileTreeElems.forEach(e => e.classList.remove("focused"));
+        if (relatedDOMList)
+            relatedDOMList.forEach(e => e.classList.remove("related"));
 
         activeElem = newActiveElem;
 
@@ -22,14 +19,8 @@ class GridUtils {
         detailContentDOM.innerHTML = '';
         detailContentDOM.appendChild(activeElem.detailContentDOM);
 
-        relatedElems = activeElem.getRelatedGrid().map(e => e.gridDOM);
-        relatedElems.forEach(e => e.classList.add("related"));
-
-
-        if (newActiveElem.fileTreeDOMList) {
-            fileTreeElems = newActiveElem.fileTreeDOMList;
-            fileTreeElems.forEach(e => e.classList.add("focused"))
-        }
+        relatedDOMList = activeElem.getRelatedDOM();
+        relatedDOMList.forEach(e => e.classList.add("related"));
     }
 }
 
@@ -58,7 +49,7 @@ class Grid {
     /**
      * @returns {Grid[]}
      */
-    getRelatedGrid() {
+    getRelatedDOM() {
         return [];
     }
 
@@ -76,6 +67,7 @@ class Grid {
             GridUtils.setActive(this);
             activeElem.gridDOM.classList.add("hovered");
         };
+        
         this.gridDOM.onclick = () => {
             enableHover = !enableHover;
             GridUtils.setActive(this);
