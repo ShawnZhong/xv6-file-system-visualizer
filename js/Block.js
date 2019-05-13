@@ -72,8 +72,6 @@ class Block extends Grid {
 
 
 class SuperBlock extends Block {
-
-
     constructor(blockNumber) {
         super(blockNumber);
 
@@ -165,8 +163,8 @@ class DataBlock extends Block {
 
     getEntriesDOM() {
         const entries = this.getEntries();
-        const node = document.createElement("div");
-        node.innerHTML = Object.entries(entries).map(([name, inum]) => `${name} → ${inum}`).join("<br>");
+        const node = document.createElement("pre");
+        node.innerHTML = Object.entries(entries).map(([name, inum]) => `${name} → ${inum}`).join("\n");
         return node;
     }
 
