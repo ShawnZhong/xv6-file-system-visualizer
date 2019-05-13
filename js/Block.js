@@ -140,6 +140,7 @@ class DataBlock extends Block {
         if (this.belongsToTextFile) {
             const node = document.createElement("pre");
             node.innerText = new TextDecoder("utf-8").decode(this.dataView);
+            node.classList.add("text");
             return node;
         }
 

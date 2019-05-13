@@ -33,6 +33,12 @@ pre {
     overflow: scroll;
 }
 
+#detail-content > .text {
+    word-break: break-all;
+    height: 85vh;
+    overflow: scroll;
+}
+
 #file-tree-content {
     word-break: break-word;
     height: 85vh;
