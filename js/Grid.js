@@ -25,20 +25,6 @@ class GridUtils {
 
         GridUtils.relatedElems.forEach(e => e.classList.add("related"));
     }
-
-
-    static setHovered() {
-        GridUtils.hoveredElem.gridDOM.classList.add("hovered");
-        GridUtils.focus();
-    }
-
-    static setSelected() {
-        GridUtils.enableHover = !GridUtils.enableHover;
-        if (GridUtils.enableHover) return;
-
-        GridUtils.selectedElem.gridDOM.classList.add("selected");
-        GridUtils.focus();
-    }
 }
 
 class Grid {
@@ -95,13 +81,16 @@ class Grid {
             GridUtils.clear();
             GridUtils.hoveredElem = this;
             GridUtils.relatedElems = this.getRelatedGrid().map(e => e.gridDOM);
-            GridUtils.setHovered();
+            GridUtils.hoveredElem.gridDOM.classList.add("hovered");
+            GridUtils.focus();
         };
         this.gridDOM.onclick = () => {
             GridUtils.clear();
             GridUtils.selectedElem = this;
             GridUtils.relatedElems = this.getRelatedGrid().map(e => e.gridDOM);
-            GridUtils.setSelected()
+            GridUtils.enableHover = !GridUtils.enableHover;
+            GridUtils.selectedElem.gridDOM.classList.add("selected");
+            GridUtils.focus();
         };
 
         return this.gridDOM;
