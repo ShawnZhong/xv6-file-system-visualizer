@@ -1,16 +1,15 @@
-const inodeContainer = document.getElementById("inode-container");
-const blockContainer = document.getElementById("block-container");
-
 const detailContent = document.getElementById("detail-content");
 const detailTitle = document.getElementById("detail-title");
 
-let currentHoveredItem;
-
 class Grid {
+    static currentHoveredItem;
+
     /**
      * @type {HTMLBaseElement}
      */
     container;
+
+    gridDOM;
 
     /**
      * @returns {HTMLBaseElement}
@@ -33,18 +32,24 @@ class Grid {
         // implemented by child class
     }
 
-    renderGrid() {
+    /**
+     * @returns {HTMLDivElement} an element in the grid
+     */
+    getGridDOM() {
         const node = document.createElement("div");
         node.classList.add(this.getClassName());
         node.onmouseover = () => {
-            if (currentHoveredItem)
-                currentHoveredItem.classList.remove("selected");
+            if (Grid.currentHoveredItem)
+                Grid.currentHoveredItem.classList.remove("selected");
             detailTitle.innerText = this.getDetailTitleDOM().innerText;
             detailContent.innerHTML = '';
             detailContent.appendChild(this.getDetailContentDOM());
             node.classList.add("selected");
-            currentHoveredItem = node;
+            Grid.currentHoveredItem = node;
         };
-        this.container.appendChild(node);
+
+        this.gridDOM = node;
+
+        return node;
     }
 }

@@ -1,5 +1,20 @@
+let inodeList;
+
+class InodeUtils {
+    static render() {
+        Inode.container.innerHTML = "";
+        inodeList.forEach(e => Inode.container.appendChild(e.getGridDOM()));
+    }
+
+
+    static initInodeList() {
+        inodeList = Array.from(new Array(superBlock.ninodes).keys(), i => new Inode(i));
+    }
+}
+
+
 class Inode extends Grid {
-    container = inodeContainer;
+    static container = document.getElementById("inode-container");
 
     constructor(inum) {
         super();
@@ -16,6 +31,8 @@ class Inode extends Grid {
         this.dataAddresses = this.getAddresses();
         this.typeName = this.getTypeName();
         this.dataBlocks = this.getDataBlocks();
+
+        this.gridDOM = this.getGridDOM();
     }
 
     getTypeName() {

@@ -1,5 +1,35 @@
+let superBlock;
+let blockList;
+
+class BlockUtils {
+    static render() {
+        Block.container.innerHTML = "";
+        blockList.forEach(e => Block.container.appendChild(e.getGridDOM()));
+    }
+
+    static initBlockList() {
+        superBlock = new SuperBlock(1);
+        blockList = new Array(superBlock.nblocks);
+
+        blockList[0] = new UnusedBlock(0);
+        blockList[1] = superBlock;
+
+        let i = 2;
+
+        while (i < 2 + superBlock.ninodeblocks)
+            blockList[i] = new InodeBlock(i++);
+
+        blockList[i] = new UnusedBlock(i++);
+        blockList[i] = new BitmapBlock(i++);
+
+        while (i < superBlock.nblocks)
+            blockList[i] = new DataBlock(i++);
+    }
+}
+
+
 class Block extends Grid {
-    container = blockContainer;
+    static container = document.getElementById("block-container");
 
     belongsToTextFile = false;
     isDirectoryBlock = false;
@@ -12,6 +42,7 @@ class Block extends Grid {
         this.uint8Array = new Uint8Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
         this.uint32Array = new Uint32Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
     }
+
 
     getType() {
         // implemented by child class
@@ -81,6 +112,13 @@ class SuperBlock extends Block {
         ninodes.innerText = "Number of inodes: " + this.ninodes;
         node.appendChild(ninodes);
 
+        return node;
+    }
+
+    getGridDOM() {
+        const node = super.getGridDOM();
+        node.onmouseover();
+        Grid.currentHoveredItem = node;
         return node;
     }
 }
