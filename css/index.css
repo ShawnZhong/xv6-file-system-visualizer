@@ -32,7 +32,7 @@ pre {
     overflow: scroll;
 }
 
-#detail-content > .text {
+pre.text {
     word-break: break-all;
     height: 85vh;
     overflow: scroll;
