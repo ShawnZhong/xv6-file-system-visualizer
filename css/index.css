@@ -2,19 +2,32 @@ body {
     font-family: sans-serif;
 }
 
-pre {
+
+#detail-content > div > pre {
     white-space: pre-wrap;
     tab-size: 6;
 }
 
-pre.text {
+#detail-content > div > pre.text {
     word-break: break-all;
 }
 
+#file-tree-content > pre {
+    margin: 0;
+}
+
+#file-tree-content > pre.related {
+    font-weight: bold;
+    text-decoration: underline;
+}
 
 @media screen and (min-width: 640px) {
     #content {
         display: flex;
+    }
+
+    #content > div {
+        padding: 0.5em;
     }
 
     #grid {
@@ -26,29 +39,11 @@ pre.text {
     }
 
     #file-tree {
-        flex: 15%;
+        flex: fit-content;
     }
-}
 
-
-#detail-content {
-    word-break: break-word;
-    height: 85vh;
-    overflow: scroll;
-}
-
-#file-tree-content {
-    word-break: break-word;
-    height: 85vh;
-    overflow: scroll;
-}
-
-
-#file-tree-content > pre {
-    margin: 0;
-}
-
-#file-tree-content > pre.related {
-    font-weight: bold;
-    text-decoration: underline;
+    .text-column > div {
+        height: 85vh;
+        overflow: scroll;
+    }
 }
