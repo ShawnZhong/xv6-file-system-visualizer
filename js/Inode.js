@@ -4,10 +4,11 @@ class InodeUtils {
     static render() {
         const container = document.getElementById("inode-container");
         container.innerHTML = "";
-        inodeList.forEach(e => container.appendChild(e.initGridDOM()));
+        inodeList.forEach(e => e.initDOM());
+        inodeList.forEach(e => container.appendChild(e.gridDOM));
     }
 
-    static initInodeList() {
+    static init() {
         inodeList = Array.from(new Array(superBlock.ninodes).keys(), i => new Inode(i));
     }
 
@@ -18,9 +19,10 @@ class InodeUtils {
 }
 
 
-class Inode extends Grid {
+class Inode extends GridItem {
     constructor(inum) {
         super();
+
         this.inum = inum;
         this.inode = new DataView(image, Config.blockSize * 2 + inum * Config.inodeSize, Config.inodeSize);
 
@@ -29,29 +31,23 @@ class Inode extends Grid {
         this.minor = this.inode.getUint16(4, true);
         this.nlink = this.inode.getUint16(6, true);
         this.size = this.inode.getUint32(8, true);
-        this.typeName = InodeUtils.getTypeName(this.type);
 
+        this.typeName = InodeUtils.getTypeName(this.type);
         this.pathList = [];
         this.fileTreeDOMList = [];
 
-        this.initAddresses();
-        this.initBlocks();
-    }
 
-
-    initAddresses() {
+        // init addresses
         const numberOfAddresses = Math.floor((this.size + Config.blockSize - 1) / Config.blockSize);
         this.dataAddresses = [];
         this.allAddresses = [];
 
-        // direct addresses
         for (let i = 0; i < Config.numberOfDirectAddress && i < numberOfAddresses; i++) {
             const address = this.inode.getUint32(12 + i * 4, true);
             this.dataAddresses.push(address);
             this.allAddresses.push(address);
         }
 
-        // indirect addresses
         if (numberOfAddresses > Config.numberOfDirectAddress) {
             const indirectAddress = this.inode.getUint32(12 + Config.numberOfDirectAddress * 4, true);
             const indirectBlock = blockList[indirectAddress].dataView;
@@ -62,9 +58,9 @@ class Inode extends Grid {
                 this.allAddresses.push(address);
             }
         }
-    }
 
-    initBlocks() {
+
+        // init blocks
         this.dataBlocks = this.dataAddresses.map(i => blockList[i]);
         this.allBlocks = this.allAddresses.map(i => blockList[i]);
         this.allBlocks.forEach(e => e.belongingInode = this);
@@ -76,15 +72,7 @@ class Inode extends Grid {
             this.dataBlocks.forEach(e => e.belongsToTextFile = true);
     }
 
-    getClassName() {
-        return this.typeName.toLowerCase() + "-inode";
-    }
-
-    getRelatedDOM() {
-        return [...this.allBlocks.map(e => e.gridDOM), ...this.fileTreeDOMList];
-    }
-
-    getDetailContentDOM() {
+    getDetailDOM() {
         const node = document.createElement("div");
 
         // path
@@ -143,27 +131,34 @@ class Inode extends Grid {
 
         // data blocks
         for (let dataBlock of this.dataBlocks) {
-            node.appendChild(dataBlock.getDetailTitleDOM());
-            node.appendChild(dataBlock.getDetailContentDOM());
+            const title = document.createElement("h4");
+            title.innerText = dataBlock.getTitle();
+            node.appendChild(title);
+
+            node.appendChild(dataBlock.getDetailDOM());
         }
 
         return node;
     }
 
-    getDetailTitleDOM() {
-        const node = document.createElement("h3");
-        node.innerText = `Inode ${this.inum}: ${this.typeName}`;
-        return node;
+    getClassName() {
+        return this.typeName.toLowerCase() + "-inode";
     }
 
-    initGridDOM() {
-        super.initGridDOM();
+    getRelatedDOM() {
+        return [...this.allBlocks.map(e => e.gridDOM), ...this.fileTreeDOMList];
+    }
 
-        this.fileTreeDOMList.forEach(e => {
-            e.onmouseover = this.gridDOM.onmouseover;
-            e.onclick = this.gridDOM.onclick;
-        });
+    getTitle() {
+        return `Inode ${this.inum}: ${this.typeName}`;
+    }
 
-        return this.gridDOM;
+    initDOM() {
+        super.initDOM();
+
+        // this.fileTreeDOMList.forEach(e => {
+        //     e.onmouseover = this.gridDOM.onmouseover;
+        //     e.onclick = this.gridDOM.onclick;
+        // });
     }
 }

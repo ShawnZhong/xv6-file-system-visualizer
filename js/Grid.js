@@ -15,50 +15,47 @@ class GridUtils {
 
         activeElem = newActiveElem;
 
-        detailTitleDOM.innerText = activeElem.getDetailTitleDOM().innerText;
+        detailTitleDOM.innerText = activeElem.getTitle();
         detailContentDOM.innerHTML = '';
-        detailContentDOM.appendChild(activeElem.detailContentDOM);
+
+
+        detailContentDOM.appendChild(activeElem.detailDOM);
 
         relatedDOMList = activeElem.getRelatedDOM();
         relatedDOMList.forEach(e => e.classList.add("related"));
     }
 }
 
-class Grid {
+class GridItem {
     /**
-     * @returns {HTMLBaseElement}
+     * @returns {string}
      */
-    getDetailContentDOM() {
-        // implemented by child class
-    }
-
-    /**
-     * @returns {HTMLBaseElement}
-     */
-    getDetailTitleDOM() {
-        // implemented by child class
+    getTitle() {
     }
 
     /**
      * @return  {string}
      */
     getClassName() {
-        // implemented by child class
     }
 
     /**
-     * @returns {Grid[]}
+     * @returns {HTMLBaseElement[]}
      */
     getRelatedDOM() {
         return [];
     }
 
     /**
-     * @returns {HTMLDivElement} an element in the grid
+     * @returns {HTMLBaseElement}
      */
-    initGridDOM() {
-        if (!this.detailContentDOM) this.detailContentDOM = this.getDetailContentDOM();
-        if (this.gridDOM) return this.gridDOM;
+    getDetailDOM() {
+    }
+
+
+    initDOM() {
+        this.detailDOM = this.getDetailDOM();
+
         this.gridDOM = document.createElement("div");
         this.gridDOM.classList.add(this.getClassName());
 
@@ -73,7 +70,5 @@ class Grid {
             GridUtils.setActive(this);
             activeElem.gridDOM.classList.add(enableHover ? "hovered" : "selected");
         };
-
-        return this.gridDOM;
     }
 }

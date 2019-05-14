@@ -6,11 +6,12 @@ class BlockUtils {
     static render() {
         const container = document.getElementById("block-container");
         container.innerHTML = "";
-        blockList.forEach(e => container.appendChild(e.initGridDOM()));
+        blockList.forEach(e => e.initDOM());
+        blockList.forEach(e => container.appendChild(e.gridDOM));
         superBlock.gridDOM.onmouseover();
     }
 
-    static initBlockList() {
+    static init() {
         superBlock = new SuperBlock(1);
         blockList = [];
 
@@ -39,7 +40,7 @@ class BlockUtils {
 }
 
 
-class Block extends Grid {
+class Block extends GridItem {
     constructor(blockNumber) {
         super();
         this.blockNumber = blockNumber;
@@ -54,7 +55,7 @@ class Block extends Grid {
         return this.type.toLowerCase().replace(' ', '-');
     }
 
-    getDetailContentDOM() {
+    getDetailDOM() {
         const node = document.createElement("pre");
         node.innerText = Array.from(this.uint32Array)
             .map(e => e.toString(16).padStart(8, '0'))
@@ -63,10 +64,8 @@ class Block extends Grid {
         return node;
     }
 
-    getDetailTitleDOM() {
-        const node = document.createElement("h4");
-        node.innerText = `Block ${this.blockNumber}: ${this.type}`;
-        return node;
+    getTitle() {
+        return `Block ${this.blockNumber}: ${this.type}`;
     }
 }
 
@@ -84,7 +83,7 @@ class SuperBlock extends Block {
     }
 
 
-    getDetailContentDOM() {
+    getDetailDOM() {
         const node = document.createElement("div");
 
         const size = document.createElement("p");
@@ -109,7 +108,7 @@ class BitmapBlock extends Block {
         this.type = "Bitmap Block";
     }
 
-    getDetailContentDOM() {
+    getDetailDOM() {
         const node = document.createElement("pre");
         node.innerHTML = Array.from(this.uint8Array)
             .map(e => e.toString(2).padStart(8, '0'))
@@ -131,7 +130,7 @@ class DataBlock extends Block {
         return this.uint8Array.every(e => e < 128);
     }
 
-    getDetailContentDOM() {
+    getDetailDOM() {
         if (this.isDirectoryBlock)
             return this.getEntriesDOM();
 
@@ -142,7 +141,7 @@ class DataBlock extends Block {
             return node;
         }
 
-        return super.getDetailContentDOM();
+        return super.getDetailDOM();
     }
 
     getEntries() {

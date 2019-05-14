@@ -3,12 +3,14 @@ let image;
 async function main(file) {
     image = await loadImage(file);
 
-    BlockUtils.initBlockList();
-    InodeUtils.initInodeList();
+    BlockUtils.init();
+    InodeUtils.init();
+    FileTree.init();
 
-    FileTree.render();
+
     BlockUtils.render();
     InodeUtils.render();
+    FileTree.render();
 }
 
 async function loadImage(file) {
