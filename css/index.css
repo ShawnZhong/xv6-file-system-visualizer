@@ -44,6 +44,6 @@ body {
 
     .text-column > div {
         height: 85vh;
-        overflow: scroll;
+        overflow: auto;
     }
 }
