@@ -197,7 +197,7 @@ class DataBlock extends Block {
 
         if (this.belongsToTextFile) {
             const node = document.createElement("pre");
-            node.innerText = new TextDecoder("utf-8").decode(this.dataView);
+            node.innerText = new TextDecoder("utf-8").decode(this.dataView).replace(/\0/g, '');
             node.classList.add("text");
             return node;
         }
