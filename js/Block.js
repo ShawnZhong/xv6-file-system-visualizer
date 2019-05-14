@@ -50,18 +50,30 @@ class Block extends GridItem {
         this.uint32Array = new Uint32Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
     }
 
-
-    getClassName() {
-        return this.type.toLowerCase().replace(' ', '-');
+    getDetailDOM() {
+        const node = document.createElement("div");
+        node.appendChild(this.getSummaryDOM());
+        node.appendChild(this.getDataDOM());
+        return node;
     }
 
-    getDetailDOM() {
-        const node = document.createElement("pre");
-        node.innerText = Array.from(this.uint32Array)
+    getSummaryDOM() {
+        const title = document.createElement("h4");
+        title.innerText = "Contents in hexadecimal: ";
+        return title;
+    }
+
+    getDataDOM() {
+        const content = document.createElement("pre");
+        content.innerText = Array.from(this.uint32Array)
             .map(e => e.toString(16).padStart(8, '0'))
             .join(", \t");
 
-        return node;
+        return content;
+    }
+
+    getClassName() {
+        return this.type.toLowerCase().replace(' ', '-');
     }
 
     getTitle() {
@@ -83,8 +95,12 @@ class SuperBlock extends Block {
     }
 
 
-    getDetailDOM() {
+    getSummaryDOM() {
         const node = document.createElement("div");
+
+        const title = document.createElement("h4");
+        title.innerText = "Metadata: ";
+        node.appendChild(title);
 
         const size = document.createElement("p");
         size.innerText = "Image size: " + this.size;
@@ -98,6 +114,8 @@ class SuperBlock extends Block {
         ninodes.innerText = "Number of inodes: " + this.ninodes;
         node.appendChild(ninodes);
 
+        node.appendChild(super.getSummaryDOM());
+
         return node;
     }
 }
@@ -108,7 +126,13 @@ class BitmapBlock extends Block {
         this.type = "Bitmap Block";
     }
 
-    getDetailDOM() {
+    getSummaryDOM() {
+        const title = document.createElement("h4");
+        title.innerText = "Contents in binary: ";
+        return title;
+    }
+
+    getDataDOM() {
         const node = document.createElement("pre");
         node.innerHTML = Array.from(this.uint8Array)
             .map(e => e.toString(2).padStart(8, '0'))
@@ -130,7 +154,44 @@ class DataBlock extends Block {
         return this.uint8Array.every(e => e < 128);
     }
 
-    getDetailDOM() {
+    getSummaryDOM() {
+        const node = document.createElement("div");
+
+        if (this.inode) {
+            const title = document.createElement("h4");
+            title.innerText = `Basic information: `;
+            node.appendChild(title);
+
+
+            const inode = document.createElement("p");
+            inode.innerText = `Used by: inode ${this.inode.inum}`;
+            node.appendChild(inode);
+
+            const type = document.createElement("p");
+            type.innerText = `Type: ${this.inode.typeName}`;
+            node.appendChild(type);
+
+            if (this.inode.pathList.length !== 0) {
+                const path = document.createElement("p");
+                path.innerText = `Path: ${this.inode.pathList.join(", ")}`;
+                node.appendChild(path);
+
+            }
+        }
+
+
+        if (this.isDirectoryBlock || this.belongsToTextFile) {
+            const content = document.createElement("h4");
+            content.innerText = "Contents: ";
+            node.appendChild(content);
+        } else {
+            node.appendChild(super.getSummaryDOM());
+        }
+
+        return node;
+    }
+
+    getDataDOM() {
         if (this.isDirectoryBlock)
             return this.getEntriesDOM();
 
@@ -141,8 +202,9 @@ class DataBlock extends Block {
             return node;
         }
 
-        return super.getDetailDOM();
+        return super.getDataDOM();
     }
+
 
     getEntries() {
         let entries = {};
@@ -167,8 +229,8 @@ class DataBlock extends Block {
         return node;
     }
 
-    getRelatedDOM() {
-        return this.belongingInode ? [this.belongingInode.gridDOM, ...this.belongingInode.getRelatedDOM()] : [];
+    getRelatedDOMList() {
+        return this.inode ? [this.inode.gridDOM, ...this.inode.getRelatedDOMList()] : [];
     }
 }
 
@@ -179,7 +241,7 @@ class InodeBlock extends Block {
         this.type = "Inode Block";
     }
 
-    getRelatedDOM() {
+    getRelatedDOMList() {
         const numberOfInodesPerBlock = Config.blockSize / Config.inodeSize;
         return [...Array(numberOfInodesPerBlock).keys()]
             .map(i => i + numberOfInodesPerBlock * (this.blockNumber - 2))

@@ -21,7 +21,7 @@ class GridUtils {
 
         detailContentDOM.appendChild(activeElem.detailDOM);
 
-        relatedDOMList = activeElem.getRelatedDOM();
+        relatedDOMList = activeElem.getRelatedDOMList();
         relatedDOMList.forEach(e => e.classList.add("related"));
     }
 }
@@ -42,7 +42,7 @@ class GridItem {
     /**
      * @returns {HTMLBaseElement[]}
      */
-    getRelatedDOM() {
+    getRelatedDOMList() {
         return [];
     }
 

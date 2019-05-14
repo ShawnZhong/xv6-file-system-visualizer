@@ -63,7 +63,7 @@ class Inode extends GridItem {
         // init blocks
         this.dataBlocks = this.dataAddresses.map(i => blockList[i]);
         this.allBlocks = this.allAddresses.map(i => blockList[i]);
-        this.allBlocks.forEach(e => e.belongingInode = this);
+        this.allBlocks.forEach(e => e.inode = this);
 
         if (this.type === 1) {
             this.dataBlocks.forEach(e => e.isDirectoryBlock = true);
@@ -74,6 +74,12 @@ class Inode extends GridItem {
 
     getDetailDOM() {
         const node = document.createElement("div");
+        if (this.type === 0) return node;
+
+        //title
+        const title = document.createElement("h4");
+        title.innerText = `Basic information: `;
+        node.appendChild(title);
 
         // path
         if (this.pathList.length !== 0) {
@@ -135,7 +141,7 @@ class Inode extends GridItem {
             title.innerText = dataBlock.getTitle();
             node.appendChild(title);
 
-            node.appendChild(dataBlock.getDetailDOM());
+            node.appendChild(dataBlock.getDataDOM());
         }
 
         return node;
@@ -145,20 +151,11 @@ class Inode extends GridItem {
         return this.typeName.toLowerCase() + "-inode";
     }
 
-    getRelatedDOM() {
+    getRelatedDOMList() {
         return [...this.allBlocks.map(e => e.gridDOM), ...this.fileTreeDOMList];
     }
 
     getTitle() {
         return `Inode ${this.inum}: ${this.typeName}`;
-    }
-
-    initDOM() {
-        super.initDOM();
-
-        // this.fileTreeDOMList.forEach(e => {
-        //     e.onmouseover = this.gridDOM.onmouseover;
-        //     e.onclick = this.gridDOM.onclick;
-        // });
     }
 }
