@@ -1,0 +1,22 @@
+#inode-container > .unused-inode {
+    background-color: gray;
+}
+
+
+#inode-container > .directory-inode {
+    background-color: #3f51b5;
+}
+
+#inode-container > .file-inode {
+    background-color: #4caf50;
+}
+
+
+#inode-container > .unknown-inode {
+    background-color: #4caf50;
+}
+
+
+#inode-container > .device-inode {
+    background-color: #f44336;
+}
