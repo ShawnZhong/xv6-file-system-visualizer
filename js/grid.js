@@ -19,6 +19,7 @@ class GridUtils {
         detailContentDOM.innerHTML = '';
 
 
+        if (!activeElem.detailDOM) activeElem.detailDOM = activeElem.getDetailDOM();
         detailContentDOM.appendChild(activeElem.detailDOM);
 
         relatedDOMList = activeElem.getRelatedDOMList();
@@ -54,8 +55,6 @@ class GridItem {
 
 
     initDOM() {
-        this.detailDOM = this.getDetailDOM();
-
         this.gridDOM = document.createElement("div");
         this.gridDOM.classList.add(this.getClassName());
 

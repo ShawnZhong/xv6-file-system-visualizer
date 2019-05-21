@@ -138,7 +138,7 @@ class Inode extends GridItem {
         // data blocks
         for (let dataBlock of this.dataBlocks) {
             const title = document.createElement("h4");
-            title.innerText = dataBlock.getTitle();
+            title.innerText = `Block ${dataBlock.blockNumber}:`;
             node.appendChild(title);
 
             node.appendChild(dataBlock.getDataDOM());
