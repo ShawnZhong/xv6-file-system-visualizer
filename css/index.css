@@ -2,12 +2,7 @@ body {
     font-family: sans-serif;
 }
 
-#image-list {
-    display: inline;
-}
-
-
-#image-list pre {
+#image-list pre, div {
     display: inline;
 }
 

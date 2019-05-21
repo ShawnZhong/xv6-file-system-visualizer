@@ -59,35 +59,7 @@
 <script src="js/inode.js"></script>
 <script src="js/entry.js"></script>
 <script src="js/index.js"></script>
-
-<script>
-    const imageListContainer = document.getElementById("image-list");
-    const imageList = ["Good", "Goodlink", "Goodrefcnt", "Goodrm"];
-    const path = "fs/";
-
-    imageList.forEach(imageName => {
-        const inputElement = document.createElement("input");
-        inputElement.name = 'file';
-        inputElement.value = path + imageName;
-        inputElement.type = 'radio';
-        inputElement.id = imageName;
-        inputElement.onchange = () => main(path + imageName);
-        imageListContainer.appendChild(inputElement);
-
-
-        const textElement = document.createElement("pre");
-        textElement.textContent = imageName + ' ';
-
-        const labelElement = document.createElement("label");
-        labelElement.htmlFor = imageName;
-        labelElement.appendChild(textElement);
-
-        imageListContainer.appendChild(labelElement);
-    });
-
-    main(path + imageList[0]);
-
-</script>
+<script src="js/image.js"></script>
 
 </body>
 
