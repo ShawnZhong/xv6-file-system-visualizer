@@ -32,6 +32,7 @@ class Inode extends GridItem {
         this.size = this.inode.getUint32(8, true);
 
         this.typeName = InodeUtils.getTypeName(this.type);
+        this.gridText = this.getGridText();
         this.pathList = [];
         this.fileTreeDOMList = [];
 
@@ -69,6 +70,11 @@ class Inode extends GridItem {
             this.directoryList = Object.assign({}, ...this.dataBlocks.map(block => block.getEntries()));
         } else if (this.dataBlocks.every(e => e.isBlockAscii()))
             this.dataBlocks.forEach(e => e.belongsToTextFile = true);
+    }
+
+    getGridText() {
+        if (this.type > 3) return "U";
+        return ["-", "D", "F", "S"][this.type];
     }
 
     getDetailElement() {

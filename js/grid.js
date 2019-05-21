@@ -28,6 +28,11 @@ class GridUtils {
 }
 
 class GridItem {
+    constructor() {
+        this.gridText = '-';
+    }
+
+
     /**
      * @returns {string}
      */
@@ -57,9 +62,10 @@ class GridItem {
     getGridElement() {
         if (this.gridDOM) return this.gridDOM;
 
-
         this.gridDOM = document.createElement("div");
+
         this.gridDOM.classList.add(this.getClassName());
+        this.gridDOM.innerHTML = this.gridText;
 
         this.gridDOM.onmouseover = () => {
             if (!enableHover) return;

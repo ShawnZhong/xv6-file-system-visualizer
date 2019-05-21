@@ -2,39 +2,18 @@
     background-color: black;
 }
 
-#block-container > .super-block:before {
-    content: "S";
-}
-
 #block-container > .unused-block {
     background-color: gray;
 }
 
-#block-container > .unused-block:before {
-    content: "-";
-}
-
-
 #block-container > .inode-block {
     background-color: #4caf50;
-}
-
-#block-container > .inode-block:before {
-    content: "I";
 }
 
 #block-container > .bitmap-block {
     background-color: #f44336;
 }
 
-#block-container > .bitmap-block:before {
-    content: "B";
-}
-
 #block-container > .data-block {
     background-color: #03a9f4;
-}
-
-#block-container > .data-block:before {
-    content: "D";
 }

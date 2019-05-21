@@ -94,6 +94,7 @@ class SuperBlock extends Block {
         this.ninodeblocks = this.ninodes * Config.inodeSize / Config.blockSize;
 
         this.type = "Super Block";
+        this.gridText = 'S';
     }
 
 
@@ -126,6 +127,7 @@ class BitmapBlock extends Block {
     constructor(blockNumber) {
         super(blockNumber);
         this.type = "Bitmap Block";
+        this.gridText = 'B';
     }
 
     getSummaryDOM() {
@@ -149,9 +151,12 @@ class BitmapBlock extends Block {
 class DataBlock extends Block {
     constructor(blockNumber) {
         super(blockNumber);
-        this.type = "Data Block";
+
         this.belongsToTextFile = false;
         this.isDirectoryBlock = false;
+
+        this.type = "Data Block";
+        this.gridText = 'D';
     }
 
 
@@ -246,6 +251,7 @@ class InodeBlock extends Block {
     constructor(blockNumber) {
         super(blockNumber);
         this.type = "Inode Block";
+        this.gridText = 'I';
     }
 
     getRelatedDOMList() {
@@ -260,5 +266,6 @@ class UnusedBlock extends DataBlock {
     constructor(blockNumber) {
         super(blockNumber);
         this.type = "Unused Block";
+        this.gridText = '-';
     }
 }
