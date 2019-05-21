@@ -160,7 +160,7 @@ class Inode extends GridItem {
     }
 
     getRelatedDOMList() {
-        return [...this.allBlocks.map(e => e.gridDOM), ...this.fileTreeDOMList];
+        return [...this.allBlocks.map(e => e.gridElement), ...this.fileTreeDOMList];
     }
 
     getTitle() {

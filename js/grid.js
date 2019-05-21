@@ -9,7 +9,7 @@ let relatedDOMList;
 class GridUtils {
     static setActive(newActiveElem) {
         if (activeElem)
-            activeElem.gridDOM.classList.remove("hovered", "selected");
+            activeElem.gridElement.classList.remove("hovered", "selected");
         if (relatedDOMList)
             relatedDOMList.forEach(e => e.classList.remove("related"));
 
@@ -60,25 +60,25 @@ class GridItem {
 
 
     getGridElement() {
-        if (this.gridDOM) return this.gridDOM;
+        if (this.gridElement) return this.gridElement;
 
-        this.gridDOM = document.createElement("div");
+        this.gridElement = document.createElement("div");
 
-        this.gridDOM.classList.add(this.getClassName());
-        this.gridDOM.innerHTML = this.gridText;
+        this.gridElement.classList.add(this.getClassName());
+        this.gridElement.innerHTML = this.gridText;
 
-        this.gridDOM.onmouseover = () => {
+        this.gridElement.onmouseover = () => {
             if (!enableHover) return;
             GridUtils.setActive(this);
-            activeElem.gridDOM.classList.add("hovered");
+            activeElem.gridElement.classList.add("hovered");
         };
 
-        this.gridDOM.onclick = () => {
+        this.gridElement.onclick = () => {
             enableHover = !enableHover;
             GridUtils.setActive(this);
-            activeElem.gridDOM.classList.add(enableHover ? "hovered" : "selected");
+            activeElem.gridElement.classList.add(enableHover ? "hovered" : "selected");
         };
 
-        return this.gridDOM;
+        return this.gridElement;
     }
 }

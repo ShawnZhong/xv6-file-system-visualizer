@@ -7,7 +7,7 @@ class BlockUtils {
         const container = document.getElementById("block-container");
         container.innerHTML = "";
         blockList.forEach(e => container.appendChild(e.getGridElement()));
-        superBlock.gridDOM.onmouseover();
+        superBlock.gridElement.onmouseover();
     }
 
     static init() {
@@ -242,7 +242,7 @@ class DataBlock extends Block {
     }
 
     getRelatedDOMList() {
-        return this.inode ? [this.inode.gridDOM, ...this.inode.getRelatedDOMList()] : [];
+        return this.inode ? [this.inode.gridElement, ...this.inode.getRelatedDOMList()] : [];
     }
 }
 
@@ -258,7 +258,7 @@ class InodeBlock extends Block {
         const numberOfInodesPerBlock = Config.blockSize / Config.inodeSize;
         return [...Array(numberOfInodesPerBlock).keys()]
             .map(i => i + numberOfInodesPerBlock * (this.blockNumber - 2))
-            .map(i => inodeList[i].gridDOM);
+            .map(i => inodeList[i].gridElement);
     }
 }
 

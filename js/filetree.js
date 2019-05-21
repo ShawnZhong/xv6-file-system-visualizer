@@ -52,8 +52,8 @@ class Entry {
         this.element = document.createElement("pre");
         this.element.innerText = `${this.name} → ${this.inum}`;
         if (this.indentation) this.element.style.marginLeft = this.indentation + "em";
-        this.element.onmouseover = this.inode.gridDOM.onmouseover;
-        this.element.onclick = this.inode.gridDOM.onclick;
+        this.element.onmouseover = this.inode.gridElement.onmouseover;
+        this.element.onclick = this.inode.gridElement.onclick;
         this.inode.fileTreeDOMList.push(this.element);
 
         return this.element;
