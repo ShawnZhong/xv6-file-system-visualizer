@@ -19,7 +19,7 @@ class GridUtils {
         detailContentDOM.innerHTML = '';
 
 
-        if (!activeElem.detailDOM) activeElem.detailDOM = activeElem.getDetailDOM();
+        if (!activeElem.detailDOM) activeElem.detailDOM = activeElem.getDetailElement();
         detailContentDOM.appendChild(activeElem.detailDOM);
 
         relatedDOMList = activeElem.getRelatedDOMList();
@@ -50,11 +50,14 @@ class GridItem {
     /**
      * @returns {HTMLBaseElement}
      */
-    getDetailDOM() {
+    getDetailElement() {
     }
 
 
-    initDOM() {
+    getGridElement() {
+        if (this.gridDOM) return this.gridDOM;
+
+
         this.gridDOM = document.createElement("div");
         this.gridDOM.classList.add(this.getClassName());
 
@@ -69,5 +72,7 @@ class GridItem {
             GridUtils.setActive(this);
             activeElem.gridDOM.classList.add(enableHover ? "hovered" : "selected");
         };
+
+        return this.gridDOM;
     }
 }

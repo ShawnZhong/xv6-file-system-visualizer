@@ -4,8 +4,7 @@ class InodeUtils {
     static render() {
         const container = document.getElementById("inode-container");
         container.innerHTML = "";
-        inodeList.forEach(e => e.initDOM());
-        inodeList.forEach(e => container.appendChild(e.gridDOM));
+        inodeList.forEach(e => container.appendChild(e.getGridElement()));
     }
 
     static init() {
@@ -72,79 +71,82 @@ class Inode extends GridItem {
             this.dataBlocks.forEach(e => e.belongsToTextFile = true);
     }
 
-    getDetailDOM() {
-        const node = document.createElement("div");
-        if (this.type === 0) return node;
+    getDetailElement() {
+        if (this.detailElement) return this.detailElement;
+
+
+        this.detailElement = document.createElement("div");
+        if (this.type === 0) return this.detailElement;
 
         //title
         const title = document.createElement("h4");
         title.innerText = `Basic information: `;
-        node.appendChild(title);
+        this.detailElement.appendChild(title);
 
         // path
         if (this.pathList.length !== 0) {
             const path = document.createElement("p");
             path.innerText = "Path: " + this.pathList.join(", ");
-            node.appendChild(path);
+            this.detailElement.appendChild(path);
         }
 
         // size
         if (this.type === 1 || this.type === 2) {
             const size = document.createElement("p");
             size.innerText = "Size: " + this.size;
-            node.appendChild(size);
+            this.detailElement.appendChild(size);
         }
 
         // nlink
         if (this.type !== 0) {
             const nlink = document.createElement("p");
             nlink.innerText = "Number of links: " + this.nlink;
-            node.appendChild(nlink);
+            this.detailElement.appendChild(nlink);
         }
 
         // nblock
         if (this.type === 1 || this.type === 2) {
             const nblock = document.createElement("p");
             nblock.innerText = "Number of data blocks: " + this.dataAddresses.length;
-            node.appendChild(nblock);
+            this.detailElement.appendChild(nblock);
         }
 
         // device only
         if (this.type === 3) {
             const major = document.createElement("p");
             major.innerText = "Major device number: " + this.major;
-            node.appendChild(major);
+            this.detailElement.appendChild(major);
 
 
             const minor = document.createElement("p");
             minor.innerText = "Minor device number: " + this.minor;
-            node.appendChild(minor);
+            this.detailElement.appendChild(minor);
         }
 
         // data addresses
         if (this.allAddresses.length !== 0) {
             const dataAddresses = document.createElement("p");
             dataAddresses.innerText = "Data block addresses: " + this.dataAddresses.join(", ");
-            node.appendChild(dataAddresses);
+            this.detailElement.appendChild(dataAddresses);
         }
 
         // indirect address
         if (this.dataAddresses.length > Config.numberOfDirectAddress) {
             const indirectAddress = document.createElement("p");
             indirectAddress.innerText = "Indirect block address: " + this.allAddresses[Config.numberOfDirectAddress];
-            node.appendChild(indirectAddress);
+            this.detailElement.appendChild(indirectAddress);
         }
 
         // data blocks
         for (let dataBlock of this.dataBlocks) {
             const title = document.createElement("h4");
             title.innerText = `Block ${dataBlock.blockNumber}:`;
-            node.appendChild(title);
+            this.detailElement.appendChild(title);
 
-            node.appendChild(dataBlock.getDataDOM());
+            this.detailElement.appendChild(dataBlock.getDataElement());
         }
 
-        return node;
+        return this.detailElement;
     }
 
     getClassName() {

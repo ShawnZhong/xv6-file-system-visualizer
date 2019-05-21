@@ -6,8 +6,7 @@ class BlockUtils {
     static render() {
         const container = document.getElementById("block-container");
         container.innerHTML = "";
-        blockList.forEach(e => e.initDOM());
-        blockList.forEach(e => container.appendChild(e.gridDOM));
+        blockList.forEach(e => container.appendChild(e.getGridElement()));
         superBlock.gridDOM.onmouseover();
     }
 
@@ -50,11 +49,12 @@ class Block extends GridItem {
         this.uint32Array = new Uint32Array(this.dataView.buffer, this.dataView.byteOffset, this.dataView.byteLength);
     }
 
-    getDetailDOM() {
-        const node = document.createElement("div");
-        node.appendChild(this.getSummaryDOM());
-        node.appendChild(this.getDataDOM());
-        return node;
+    getDetailElement() {
+        if (this.detailElement) return this.detailElement;
+        this.detailElement = document.createElement("div");
+        this.detailElement.appendChild(this.getSummaryDOM());
+        this.detailElement.appendChild(this.getDataElement());
+        return this.detailElement;
     }
 
     getSummaryDOM() {
@@ -63,13 +63,15 @@ class Block extends GridItem {
         return title;
     }
 
-    getDataDOM() {
-        const content = document.createElement("pre");
-        content.innerText = Array.from(this.uint32Array)
+    getDataElement() {
+        if (this.dataElement) return this.dataElement;
+
+        this.dataElement = document.createElement("pre");
+        this.dataElement.innerText = Array.from(this.uint32Array)
             .map(e => e.toString(16).padStart(8, '0'))
             .join(", \t");
 
-        return content;
+        return this.dataElement;
     }
 
     getClassName() {
@@ -132,12 +134,15 @@ class BitmapBlock extends Block {
         return title;
     }
 
-    getDataDOM() {
-        const node = document.createElement("pre");
-        node.innerHTML = Array.from(this.uint8Array)
+    getDataElement() {
+        if (this.dataElement) return this.dataElement;
+
+        this.dataElement = document.createElement("pre");
+        this.dataElement.innerHTML = Array.from(this.uint8Array)
             .map(e => e.toString(2).padStart(8, '0'))
             .join(", \t");
-        return node;
+
+        return this.dataElement;
     }
 }
 
@@ -191,7 +196,9 @@ class DataBlock extends Block {
         return node;
     }
 
-    getDataDOM() {
+    getDataElement() {
+        if (this.dataElement) return this.dataElement;
+
         if (this.isDirectoryBlock)
             return this.getEntriesDOM();
 
@@ -202,7 +209,7 @@ class DataBlock extends Block {
             return node;
         }
 
-        return super.getDataDOM();
+        return super.getDataElement();
     }
 
 

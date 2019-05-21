@@ -1,7 +1,7 @@
 class FileTree {
     static init() {
         this.entryList = [];
-        this.DOM = document.getElementById("file-tree-content");
+        this.element = document.getElementById("file-tree-content");
         this.initRoot();
         this.traverse(this.root);
     }
@@ -27,9 +27,8 @@ class FileTree {
     }
 
     static render() {
-        this.DOM.innerHTML = '';
-        this.entryList.forEach(e => e.initDOM());
-        this.entryList.forEach(e => this.DOM.appendChild(e.DOM));
+        this.element.innerHTML = '';
+        this.entryList.forEach(e => this.element.appendChild(e.getElement()));
     }
 }
 
@@ -47,12 +46,16 @@ class Entry {
             this.inode.pathList.push(this.path);
     }
 
-    initDOM() {
-        this.DOM = document.createElement("pre");
-        this.DOM.innerText = `${this.name} → ${this.inum}`;
-        if (this.indentation) this.DOM.style.marginLeft = this.indentation + "em";
-        this.DOM.onmouseover = this.inode.gridDOM.onmouseover;
-        this.DOM.onclick = this.inode.gridDOM.onclick;
-        this.inode.fileTreeDOMList.push(this.DOM);
+    getElement() {
+        if (this.element) return this.element;
+
+        this.element = document.createElement("pre");
+        this.element.innerText = `${this.name} → ${this.inum}`;
+        if (this.indentation) this.element.style.marginLeft = this.indentation + "em";
+        this.element.onmouseover = this.inode.gridDOM.onmouseover;
+        this.element.onclick = this.inode.gridDOM.onclick;
+        this.inode.fileTreeDOMList.push(this.element);
+
+        return this.element;
     }
 }
