@@ -1,6 +1,6 @@
 class Image {
     constructor(imageName) {
-        this.imageSelector = document.createElement("div");
+        this.element = document.createElement("div");
 
         this.inputElement = document.createElement("input");
         this.inputElement.name = 'file';
@@ -8,7 +8,7 @@ class Image {
         this.inputElement.type = 'radio';
         this.inputElement.id = imageName;
         this.inputElement.onchange = () => main(path + imageName);
-        this.imageSelector.appendChild(this.inputElement);
+        this.element.appendChild(this.inputElement);
 
 
         const textElement = document.createElement("pre");
@@ -18,7 +18,7 @@ class Image {
         labelElement.htmlFor = imageName;
         labelElement.appendChild(textElement);
 
-        this.imageSelector.appendChild(labelElement);
+        this.element.appendChild(labelElement);
     }
 
     choose() {

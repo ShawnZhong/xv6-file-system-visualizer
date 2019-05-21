@@ -13,39 +13,37 @@
 </head>
 
 <body>
-<form>
-    <fieldset>
-        <legend>Please select a xv6 file system image:</legend>
 
-        <div id="image-list"></div>
-        or upload your own
-        <input id="file-upload" onChange="main(this.files[0])" type="file"/>
+<fieldset id="image-selector">
+    <legend>Please select a xv6 file system image:</legend>
 
-    </fieldset>
-</form>
+    <div id="image-list"></div>
+    or upload your own
+    <input id="file-upload" onChange="main(this.files[0])" type="file"/>
+</fieldset>
 
 <div id="content">
-    <div class="column" id="file-tree">
+    <div class="column panel" id="file-tree">
         <h1>File Tree</h1>
-        <div id="file-tree-content"></div>
+        <div class="content" id="file-tree-content"></div>
     </div>
 
     <div class="column" id="grid">
-        <div id="inode-grid">
+        <div class="panel" id="inode-grid">
             <h1>Inodes</h1>
-            <div class="grid-container" id="inode-container"></div>
+            <div class="grid-container content" id="inode-container"></div>
         </div>
 
-        <div id="block-grid">
+        <div class="panel" id="block-grid">
             <h1>Blocks</h1>
-            <div class="grid-container" id="block-container"></div>
+            <div class="grid-container content" id="block-container"></div>
         </div>
     </div>
 
 
-    <div class="column" id="detail">
+    <div class="column panel" id="detail">
         <h1 id="detail-title"></h1>
-        <div id="detail-content"></div>
+        <div class="content" id="detail-content"></div>
     </div>
 
 </div>
@@ -61,13 +59,13 @@
 
 <script type='text/javascript'>
     const imageListContainer = document.getElementById("image-list");
-    const imageList = ["Good", "Goodlink", "Goodrefcnt", "Goodrm"];
+    const imageNames = ["Good", "Goodlink", "Goodrefcnt", "Goodrm"];
     const path = "fs/";
 
-    const imageListElement = imageList.map(imageName => new Image(imageName));
-    imageListElement.forEach(imageElement => imageListContainer.appendChild(imageElement.imageSelector));
+    const imageObjects = imageNames.map(imageName => new Image(imageName));
 
-    imageListElement[0].choose();
+    imageObjects.forEach(image => imageListContainer.appendChild(image.element));
+    imageObjects[0].choose();
 </script>
 
 </body>

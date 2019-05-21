@@ -6,7 +6,7 @@ pre {
     margin: 0;
 }
 
-#image-list pre, div {
+#image-selector * {
     display: inline;
 }
 
@@ -46,8 +46,8 @@ pre {
         flex: fit-content;
     }
 
-    .column {
-        height: 85vh;
+    .panel > .content {
+        max-height: 90vh;
         overflow: auto;
     }
 }
