@@ -2,6 +2,10 @@ body {
     font-family: sans-serif;
 }
 
+pre {
+    margin: 0;
+}
+
 #image-list pre, div {
     display: inline;
 }
@@ -15,9 +19,6 @@ body {
     word-break: break-all;
 }
 
-#file-tree-content > pre {
-    margin: 0;
-}
 
 #file-tree-content > pre.related {
     font-weight: bold;
@@ -45,7 +46,7 @@ body {
         flex: fit-content;
     }
 
-    .text-column > div {
+    .column {
         height: 85vh;
         overflow: auto;
     }

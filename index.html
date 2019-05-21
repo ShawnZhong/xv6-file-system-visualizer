@@ -18,21 +18,19 @@
         <legend>Please select a xv6 file system image:</legend>
 
         <div id="image-list"></div>
-
         or upload your own
-
         <input id="file-upload" onChange="main(this.files[0])" type="file"/>
 
     </fieldset>
 </form>
 
 <div id="content">
-    <div class="text-column" id="file-tree">
+    <div class="column" id="file-tree">
         <h1>File Tree</h1>
         <div id="file-tree-content"></div>
     </div>
 
-    <div id="grid">
+    <div class="column" id="grid">
         <div id="inode-grid">
             <h1>Inodes</h1>
             <div class="grid-container" id="inode-container"></div>
@@ -45,7 +43,7 @@
     </div>
 
 
-    <div class="text-column" id="detail">
+    <div class="column" id="detail">
         <h1 id="detail-title"></h1>
         <div id="detail-content"></div>
     </div>
@@ -53,14 +51,24 @@
 </div>
 
 
-<script src="js/config.js"></script>
-<script src="js/grid.js"></script>
-<script src="js/block.js"></script>
-<script src="js/inode.js"></script>
-<script src="js/entry.js"></script>
-<script src="js/index.js"></script>
-<script src="js/image.js"></script>
+<script src="js/config.js" type='text/javascript'></script>
+<script src="js/grid.js" type='text/javascript'></script>
+<script src="js/block.js" type='text/javascript'></script>
+<script src="js/inode.js" type='text/javascript'></script>
+<script src="js/entry.js" type='text/javascript'></script>
+<script src="js/image.js" type='text/javascript'></script>
+<script src="js/index.js" type='text/javascript'></script>
+
+<script type='text/javascript'>
+    const imageListContainer = document.getElementById("image-list");
+    const imageList = ["Good", "Goodlink", "Goodrefcnt", "Goodrm"];
+    const path = "fs/";
+
+    const imageListElement = imageList.map(imageName => new Image(imageName));
+    imageListElement.forEach(imageElement => imageListContainer.appendChild(imageElement.imageSelector));
+
+    imageListElement[0].choose();
+</script>
 
 </body>
-
 </html>

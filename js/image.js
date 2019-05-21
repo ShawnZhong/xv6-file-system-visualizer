@@ -28,11 +28,4 @@ class Image {
 
 }
 
-const imageListContainer = document.getElementById("image-list");
-const imageList = ["Good", "Goodlink", "Goodrefcnt", "Goodrm"];
-const path = "fs/";
 
-const imageListElement = imageList.map(imageName => new Image(imageName));
-imageListElement.forEach(imageElement => imageListContainer.appendChild(imageElement.imageSelector));
-
-imageListElement[0].choose();
