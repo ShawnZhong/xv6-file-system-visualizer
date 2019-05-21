@@ -2,6 +2,14 @@ body {
     font-family: sans-serif;
 }
 
+#image-list {
+    display: inline;
+}
+
+
+#image-list pre {
+    display: inline;
+}
 
 #detail-content > div > pre {
     white-space: pre-wrap;

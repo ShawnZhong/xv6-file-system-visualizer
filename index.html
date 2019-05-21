@@ -17,26 +17,11 @@
     <fieldset>
         <legend>Please select a xv6 file system image:</legend>
 
-        <input id="file-choice1" name="file" onChange="main(this.value)" type="radio"
-               value="https://raw.githubusercontent.com/ShawnZhong/xv6-file-system-visualizer/master/fs/Good">
-        <label for="file-choice1">Good</label>
+        <div id="image-list"></div>
 
-        <input id="file-choice2" name="file" onChange="main(this.value)" type="radio"
-               value="https://raw.githubusercontent.com/ShawnZhong/xv6-file-system-visualizer/master/fs/Goodlink">
-        <label for="file-choice2">Goodlink</label>
+        or upload your own
 
-        <input id="file-choice3" name="file" onChange="main(this.value)" type="radio"
-               value="https://raw.githubusercontent.com/ShawnZhong/xv6-file-system-visualizer/master/fs/Goodrefcnt">
-        <label for="file-choice3">Goodrefcnt</label>
-
-        <input id="file-choice4" name="file" onChange="main(this.value)" type="radio"
-               value="https://raw.githubusercontent.com/ShawnZhong/xv6-file-system-visualizer/master/fs/Goodrm">
-        <label for="file-choice4">Goodrm</label>
-
-        <input id="file-choice0" name="file" type="radio">
-        <label for="file-choice0">
-            <input id="file-upload" onChange="main(this.files[0])" type="file"/>
-        </label>
+        <input id="file-upload" onChange="main(this.files[0])" type="file"/>
 
     </fieldset>
 </form>
@@ -76,10 +61,34 @@
 <script src="js/index.js"></script>
 
 <script>
-    document.getElementById('file-choice3').click();
-    document.getElementById('file-upload').onclick = () => document.getElementById('file-choice0').click();
+    const imageListContainer = document.getElementById("image-list");
+    const imageList = ["Good", "Goodlink", "Goodrefcnt", "Goodrm"];
+    const path = "fs/";
+
+    imageList.forEach(imageName => {
+        const inputElement = document.createElement("input");
+        inputElement.name = 'file';
+        inputElement.value = path + imageName;
+        inputElement.type = 'radio';
+        inputElement.id = imageName;
+        inputElement.onchange = () => main(path + imageName);
+        imageListContainer.appendChild(inputElement);
+
+
+        const textElement = document.createElement("pre");
+        textElement.textContent = imageName + ' ';
+
+        const labelElement = document.createElement("label");
+        labelElement.htmlFor = imageName;
+        labelElement.appendChild(textElement);
+
+        imageListContainer.appendChild(labelElement);
+    });
+
+    main(path + imageList[0]);
 
 </script>
+
 </body>
 
 </html>
