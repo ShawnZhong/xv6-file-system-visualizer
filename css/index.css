@@ -33,7 +33,7 @@ pre {
 @media screen and (min-width: 640px) {
     body {
         margin: 8px;
-        height: calc(100vh - 16px);
+        max-height: calc(100vh - 16px);
         display: flex;
         flex-direction: column;
         overflow: hidden
@@ -53,7 +53,7 @@ pre {
     }
 
     .column > .content {
-        height: 100%;
+        max-height: 100%;
         overflow: auto;
     }
 
@@ -75,13 +75,13 @@ pre {
     #block-grid {
         flex-grow: 1;
         display: flex;
-        height: 100%;
+        max-height: 100%;
         flex-direction: column;
         overflow: auto;
     }
 
     #block-grid > .content {
-        height: 100%;
+        max-height: 100%;
         overflow: auto;
     }
 }
