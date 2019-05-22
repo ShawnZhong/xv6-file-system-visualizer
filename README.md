@@ -10,4 +10,4 @@
 
 ### Screen Record
 
-![screenrecord](screenrecord.gif)
+<img src="screenrecord.gif" align="center">
