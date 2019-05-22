@@ -36,18 +36,18 @@ pre {
         height: calc(100vh - 16px);
         display: flex;
         flex-direction: column;
-        /*overflow: hidden;*/
+        overflow: hidden
     }
 
     #image-viewer {
         display: flex;
-        height: 100%;
+        overflow: auto;
     }
 
     /* Fit in full height */
     .column {
         padding: 0.5em;
-        height: 100%;
+        height: calc(100% - 1em);
         display: flex;
         flex-direction: column;
     }
@@ -77,10 +77,11 @@ pre {
         display: flex;
         height: 100%;
         flex-direction: column;
+        overflow: auto;
     }
 
     #block-grid > .content {
         height: 100%;
-        overflow: scroll;
+        overflow: auto;
     }
 }
