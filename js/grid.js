@@ -13,6 +13,9 @@ class Grid {
             this.activeElem.gridElement.classList.remove("hovered", "selected");
         if (this.relatedDOMList)
             this.relatedDOMList.forEach(e => e.classList.remove("related"));
+        Elements.blockContainer.classList.remove("not-selected");
+        Elements.inodeContainer.classList.remove("not-selected");
+        Elements.fileTreeContent.classList.remove("not-selected")
     }
 
     static setDetailContent() {
@@ -34,6 +37,9 @@ class Grid {
 
     static setClicked() {
         this.activeElem.gridElement.classList.add("selected");
+        Elements.blockContainer.classList.add("not-selected");
+        Elements.inodeContainer.classList.add("not-selected");
+        Elements.fileTreeContent.classList.add("not-selected")
 
     }
 }

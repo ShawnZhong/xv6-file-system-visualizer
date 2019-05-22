@@ -5,6 +5,10 @@
     color: white;
 }
 
+.grid-container.not-selected > div {
+    color: lightgray;
+}
+
 .grid-container > div {
     width: 1.5rem;
     line-height: 1;
@@ -15,12 +19,15 @@
 .grid-container > div.hovered {
     box-shadow: 0 0 3px black;
     font-weight: bold;
+    color: black;
+    border-color: black;
     z-index: 0;
 }
 
 .grid-container > div.selected {
     font-weight: bold;
-    border-color: black;
+    color: black;
+    box-shadow: 0 0 5px black;
     z-index: 0;
 }
 

@@ -23,8 +23,13 @@ pre {
 
 
 #file-tree-content > pre.related {
+    color: black !important;
     font-weight: bold;
     text-decoration: underline;
+}
+
+#file-tree-content.not-selected > pre {
+    color: gray;
 }
 
 @media screen and (min-width: 640px) {
