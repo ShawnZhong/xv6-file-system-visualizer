@@ -43,11 +43,14 @@ pre {
     }
 
     #file-tree {
-        flex: fit-content;
+        min-width: 12rem;
     }
 
-    .panel > .content {
+    .column > .content {
         max-height: 90vh;
         overflow: auto;
+    }
+
+    #block-container {
     }
 }

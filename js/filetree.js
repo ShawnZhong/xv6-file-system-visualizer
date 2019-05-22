@@ -9,7 +9,7 @@ class FileTree {
     static initRoot() {
         this.root = {
             inum: 1,
-            indentation: -2,
+            indentation: -1,
             path: ""
         };
         inodeList[1].pathList.push("/");
@@ -39,7 +39,7 @@ class Entry {
         this.inum = inum;
         this.inode = inodeList[inum];
 
-        this.indentation = parent.indentation + 2;
+        this.indentation = parent.indentation + 1;
         this.path = parent.path + "/" + name;
 
         if (name !== '.' && name !== '..')
@@ -51,7 +51,10 @@ class Entry {
 
         this.element = document.createElement("pre");
         this.element.innerText = `${this.name} → ${this.inum}`;
-        if (this.indentation) this.element.style.marginLeft = this.indentation + "em";
+
+        if (this.indentation)
+            this.element.style.marginLeft = this.indentation + "em";
+
         this.element.onmouseover = this.inode.gridElement.onmouseover;
         this.element.onclick = this.inode.gridElement.onclick;
         this.inode.fileTreeDOMList.push(this.element);
