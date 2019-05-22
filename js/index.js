@@ -3,6 +3,7 @@ let image;
 async function main(file) {
     image = await loadImage(file);
 
+    Grid.init();
     BlockUtils.init();
     InodeUtils.init();
     FileTree.init();

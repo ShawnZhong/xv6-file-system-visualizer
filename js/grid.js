@@ -1,47 +1,51 @@
-let enableHover = true;
-
 class Grid {
+    static init() {
+        Grid.enableHover = true;
+        Elements.fileTreePanel.onclick = Grid.resetHover;
+        Elements.gridColumn.onclick = Grid.resetHover;
+    }
+
     static setActive(newActiveElem) {
-        this.removeOldActiveElem();
-        this.activeElem = newActiveElem;
-        this.setDetailContent();
-        this.showRelated();
+        Grid.removeOldActiveElem();
+        Grid.activeElem = newActiveElem;
+        Grid.setDetailContent();
+        Grid.showRelated();
     }
 
     static resetHover() {
-        enableHover = true;
+        Grid.enableHover = true;
         Grid.removeOldActiveElem();
     }
 
     static removeOldActiveElem() {
-        if (this.activeElem)
-            this.activeElem.gridElement.classList.remove("hovered", "selected");
-        if (this.relatedDOMList)
-            this.relatedDOMList.forEach(e => e.classList.remove("related"));
+        if (Grid.activeElem)
+            Grid.activeElem.gridElement.classList.remove("hovered", "selected");
+        if (Grid.relatedDOMList)
+            Grid.relatedDOMList.forEach(e => e.classList.remove("related"));
         Elements.blockContainer.classList.remove("not-selected");
         Elements.inodeContainer.classList.remove("not-selected");
         Elements.fileTreeContent.classList.remove("not-selected")
     }
 
     static setDetailContent() {
-        Elements.detailTitle.innerText = this.activeElem.getTitle();
+        Elements.detailTitle.innerText = Grid.activeElem.getTitle();
 
-        if (!this.activeElem.detailDOM) this.activeElem.detailDOM = this.activeElem.getDetailElement();
+        if (!Grid.activeElem.detailDOM) Grid.activeElem.detailDOM = Grid.activeElem.getDetailElement();
         Elements.detailContent.innerHTML = '';
-        Elements.detailContent.appendChild(this.activeElem.detailDOM);
+        Elements.detailContent.appendChild(Grid.activeElem.detailDOM);
     }
 
     static showRelated() {
-        this.relatedDOMList = this.activeElem.getRelatedDOMList();
-        this.relatedDOMList.forEach(e => e.classList.add("related"));
+        Grid.relatedDOMList = Grid.activeElem.getRelatedDOMList();
+        Grid.relatedDOMList.forEach(e => e.classList.add("related"));
     }
 
     static setHovered() {
-        this.activeElem.gridElement.classList.add("hovered");
+        Grid.activeElem.gridElement.classList.add("hovered");
     }
 
     static setClicked() {
-        this.activeElem.gridElement.classList.add("selected");
+        Grid.activeElem.gridElement.classList.add("selected");
         Elements.blockContainer.classList.add("not-selected");
         Elements.inodeContainer.classList.add("not-selected");
         Elements.fileTreeContent.classList.add("not-selected")
@@ -89,7 +93,7 @@ class GridItem {
         this.gridElement.innerHTML = this.gridText;
 
         this.gridElement.onmouseover = (e) => {
-            if (!enableHover) return;
+            if (!Grid.enableHover) return;
             Grid.setActive(this);
             Grid.setHovered();
 
@@ -97,10 +101,10 @@ class GridItem {
         };
 
         this.gridElement.onclick = (e) => {
-            enableHover = !enableHover;
+            Grid.enableHover = !Grid.enableHover;
             Grid.setActive(this);
 
-            if (enableHover)
+            if (Grid.enableHover)
                 Grid.setHovered();
             else
                 Grid.setClicked();
@@ -111,6 +115,3 @@ class GridItem {
         return this.gridElement;
     }
 }
-
-document.getElementById("file-tree").onclick = Grid.resetHover;
-document.getElementById("grid").onclick = Grid.resetHover;
