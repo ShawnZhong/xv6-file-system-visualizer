@@ -4,10 +4,10 @@ class Image {
 
         this.inputElement = document.createElement("input");
         this.inputElement.name = 'file';
-        this.inputElement.value = path + imageName;
+        this.inputElement.value = Config.imagePath + imageName;
         this.inputElement.type = 'radio';
         this.inputElement.id = imageName;
-        this.inputElement.onchange = () => main(path + imageName);
+        this.inputElement.onchange = () => main(Config.imagePath + imageName);
         this.element.appendChild(this.inputElement);
 
 
@@ -28,4 +28,7 @@ class Image {
 
 }
 
+const imageObjects = Config.imageNames.map(imageName => new Image(imageName));
 
+imageObjects.forEach(image => Elements.imageListContainer.appendChild(image.element));
+imageObjects[0].choose();

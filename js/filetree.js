@@ -1,7 +1,6 @@
 class FileTree {
     static init() {
         this.entryList = [];
-        this.element = document.getElementById("file-tree-content");
         this.initRoot();
         this.traverse(this.root);
     }
@@ -27,8 +26,8 @@ class FileTree {
     }
 
     static render() {
-        this.element.innerHTML = '';
-        this.entryList.forEach(e => this.element.appendChild(e.getElement()));
+        Elements.fileTreeContent.innerHTML = '';
+        this.entryList.forEach(e => Elements.fileTreeContent.appendChild(e.getElement()));
     }
 }
 

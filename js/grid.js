@@ -1,6 +1,3 @@
-const detailContentDOM = document.getElementById("detail-content");
-const detailTitleDOM = document.getElementById("detail-title");
-
 let enableHover = true;
 
 class Grid {
@@ -19,11 +16,11 @@ class Grid {
     }
 
     static setDetailContent() {
-        detailTitleDOM.innerText = this.activeElem.getTitle();
+        Elements.detailTitle.innerText = this.activeElem.getTitle();
 
         if (!this.activeElem.detailDOM) this.activeElem.detailDOM = this.activeElem.getDetailElement();
-        detailContentDOM.innerHTML = '';
-        detailContentDOM.appendChild(this.activeElem.detailDOM);
+        Elements.detailContent.innerHTML = '';
+        Elements.detailContent.appendChild(this.activeElem.detailDOM);
     }
 
     static showRelated() {
@@ -37,7 +34,7 @@ class Grid {
 
     static setClicked() {
         this.activeElem.gridElement.classList.add("selected");
-        
+
     }
 }
 

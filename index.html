@@ -48,25 +48,25 @@
 
 </div>
 
+<script type='text/javascript'>
+    const Elements = Object.freeze({
+        imageListContainer: document.getElementById("image-list"),
+        detailContent: document.getElementById("detail-content"),
+        detailTitle: document.getElementById("detail-title"),
+        inodeContainer: document.getElementById("inode-container"),
+        blockContainer: document.getElementById("block-container"),
+        fileTreeContent: document.getElementById("file-tree-content")
+    });
+
+</script>
 
 <script src="js/config.js" type='text/javascript'></script>
 <script src="js/grid.js" type='text/javascript'></script>
 <script src="js/block.js" type='text/javascript'></script>
 <script src="js/inode.js" type='text/javascript'></script>
 <script src="js/filetree.js" type='text/javascript'></script>
-<script src="js/image.js" type='text/javascript'></script>
 <script src="js/index.js" type='text/javascript'></script>
-
-<script type='text/javascript'>
-    const imageListContainer = document.getElementById("image-list");
-    const imageNames = ["Good", "Goodlink", "Goodrefcnt", "Goodrm"];
-    const path = "fs/";
-
-    const imageObjects = imageNames.map(imageName => new Image(imageName));
-
-    imageObjects.forEach(image => imageListContainer.appendChild(image.element));
-    imageObjects[0].choose();
-</script>
+<script src="js/image.js" type='text/javascript'></script>
 
 </body>
 </html>

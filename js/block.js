@@ -4,9 +4,8 @@ let bitmap;
 
 class BlockUtils {
     static render() {
-        const container = document.getElementById("block-container");
-        container.innerHTML = "";
-        blockList.forEach(e => container.appendChild(e.getGridElement()));
+        Elements.blockContainer.innerHTML = "";
+        blockList.forEach(e => Elements.blockContainer.appendChild(e.getGridElement()));
         superBlock.gridElement.onmouseover();
     }
 

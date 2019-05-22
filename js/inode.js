@@ -2,9 +2,8 @@ let inodeList;
 
 class InodeUtils {
     static render() {
-        const container = document.getElementById("inode-container");
-        container.innerHTML = "";
-        inodeList.forEach(e => container.appendChild(e.getGridElement()));
+        Elements.inodeContainer.innerHTML = "";
+        inodeList.forEach(e => Elements.inodeContainer.appendChild(e.getGridElement()));
     }
 
     static init() {
