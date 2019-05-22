@@ -16,10 +16,21 @@ class FileTree {
 
     static traverse(parent) {
         const directory = inodeList[parent.inum].directoryList;
+        
+        // make sure that "." and ".." appears first
+        if (directory["."])
+            this.entryList.push(new Entry(".", directory["."], parent));
+
+        if (directory[".."])
+            this.entryList.push(new Entry("..", directory[".."], parent));
+
         for (const [name, inum] of Object.entries(directory)) {
+            if (name === '.' || name === '..') continue;
+
             const entry = new Entry(name, inum, parent);
             this.entryList.push(entry);
-            if (inodeList[inum].type === 1 && name !== '.' && name !== '..')
+
+            if (inodeList[inum].type === 1)
                 this.traverse(entry);
         }
 
