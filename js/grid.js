@@ -8,6 +8,11 @@ class Grid {
         this.showRelated();
     }
 
+    static resetHover() {
+        enableHover = true;
+        Grid.removeOldActiveElem();
+    }
+
     static removeOldActiveElem() {
         if (this.activeElem)
             this.activeElem.gridElement.classList.remove("hovered", "selected");
@@ -40,7 +45,6 @@ class Grid {
         Elements.blockContainer.classList.add("not-selected");
         Elements.inodeContainer.classList.add("not-selected");
         Elements.fileTreeContent.classList.add("not-selected")
-
     }
 }
 
@@ -84,13 +88,15 @@ class GridItem {
         this.gridElement.classList.add(this.getClassName());
         this.gridElement.innerHTML = this.gridText;
 
-        this.gridElement.onmouseover = () => {
+        this.gridElement.onmouseover = (e) => {
             if (!enableHover) return;
             Grid.setActive(this);
             Grid.setHovered();
+
+            if (e) e.stopPropagation();
         };
 
-        this.gridElement.onclick = () => {
+        this.gridElement.onclick = (e) => {
             enableHover = !enableHover;
             Grid.setActive(this);
 
@@ -98,8 +104,13 @@ class GridItem {
                 Grid.setHovered();
             else
                 Grid.setClicked();
+
+            if (e) e.stopPropagation();
         };
 
         return this.gridElement;
     }
 }
+
+document.getElementById("file-tree").onclick = Grid.resetHover;
+document.getElementById("grid").onclick = Grid.resetHover;
