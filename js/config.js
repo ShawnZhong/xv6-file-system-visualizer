@@ -5,5 +5,7 @@ const Config = {
     numberOfDirectAddress: 12,
 
     imagePath: "fs/",
-    imageNames: ["Good", "Goodlink", "Goodrefcnt", "Goodrm", "Repair", "Badinode"]
+    imageNames: [
+        "Good", "Goodlink", "Goodrefcnt", "Goodrm",
+        "Repair", "Badinode", "Imrkfree", "Imrkused", "Mrkfree", "Mrkused"]
 };
