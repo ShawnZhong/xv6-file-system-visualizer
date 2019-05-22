@@ -1,13 +1,13 @@
 # xv6 File System Visualizer
 
-### Summary
+## Summary
 
 - [This](https://shawnzhong.github.io/xv6-file-system-visualizer/) is a visualizer for xv6 file system image.
 
-### Screenshot
+## Screenshot
 
 # ![screenshot](screenshot.png)
 
-### Screen Record
+## Screen Record
 
-<img src="screenrecord.gif" style="witdh: 100%;">
+<img src="screenrecord.gif" width="100%">
