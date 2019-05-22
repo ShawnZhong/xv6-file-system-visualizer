@@ -64,13 +64,15 @@ class Block extends GridItem {
 
     getDataElement() {
         if (this.dataElement) return this.dataElement;
+        return this.getHexDataElement();
+    }
 
-        this.dataElement = document.createElement("pre");
-        this.dataElement.innerText = Array.from(this.uint32Array)
+    getHexDataElement() {
+        const element = document.createElement("pre");
+        element.innerText = Array.from(this.uint32Array)
             .map(e => e.toString(16).padStart(8, '0'))
             .join(", \t");
-
-        return this.dataElement;
+        return element
     }
 
     getClassName() {
@@ -213,7 +215,7 @@ class DataBlock extends Block {
             return node;
         }
 
-        return super.getDataElement();
+        return this.getHexDataElement();
     }
 
 
