@@ -10,4 +10,4 @@
 
 ### Screen Record
 
-<img src="screenrecord.gif" align="center">
+<img src="screenrecord.gif" style="witdh: 100%;">
