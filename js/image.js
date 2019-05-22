@@ -12,7 +12,7 @@ class Image {
 
 
         const textElement = document.createElement("pre");
-        textElement.textContent = imageName + ' ';
+        textElement.textContent = imageName;
 
         const labelElement = document.createElement("label");
         labelElement.htmlFor = imageName;
@@ -21,14 +21,23 @@ class Image {
         this.element.appendChild(labelElement);
     }
 
-    choose() {
+    check() {
         this.inputElement.checked = true;
         this.inputElement.onchange();
     }
 
+    uncheck() {
+        this.inputElement.checked = false;
+    }
 }
 
 const imageObjects = Config.imageNames.map(imageName => new Image(imageName));
 
 imageObjects.forEach(image => Elements.imageListContainer.appendChild(image.element));
-imageObjects[0].choose();
+imageObjects[2].check();
+
+Elements.fileUpload.onchange = (e) => {
+    if (e.target.files.length === 0) return;
+    imageObjects.forEach(e => e.uncheck());
+    main(e.target.files[0]);
+};

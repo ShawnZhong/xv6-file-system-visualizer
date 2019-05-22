@@ -81,12 +81,17 @@ class Inode extends GridItem {
 
 
         this.detailElement = document.createElement("div");
-        if (this.type === 0) return this.detailElement;
+
 
         //title
         const title = document.createElement("h4");
         title.innerText = `Basic information: `;
         this.detailElement.appendChild(title);
+
+        // type
+        const type = document.createElement("p");
+        type.innerText = `Type: ${this.type} (${this.typeName})`;
+        this.detailElement.appendChild(type);
 
         // path
         if (this.pathList.length !== 0) {

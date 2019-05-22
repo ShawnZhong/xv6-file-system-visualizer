@@ -10,6 +10,10 @@ pre {
     display: inline;
 }
 
+#image-list > div {
+    margin-left: 0.2em;
+}
+
 #detail-content > div > pre {
     white-space: pre-wrap;
     tab-size: 6;

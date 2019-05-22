@@ -18,8 +18,8 @@
     <legend>Please select an xv6 file system image:</legend>
 
     <div id="image-list"></div>
-    or upload your own
-    <input id="file-upload" onChange="main(this.files[0])" type="file"/>
+    , or upload your own
+    <input id="file-upload" type="file"/>
 </fieldset>
 
 <div class="row" id="image-viewer">
@@ -51,6 +51,7 @@
 <script type='text/javascript'>
     const Elements = Object.freeze({
         imageListContainer: document.getElementById("image-list"),
+        fileUpload: document.getElementById("file-upload"),
         detailContent: document.getElementById("detail-content"),
         detailTitle: document.getElementById("detail-title"),
         inodeContainer: document.getElementById("inode-container"),
