@@ -3,27 +3,41 @@ const detailTitleDOM = document.getElementById("detail-title");
 
 let enableHover = true;
 
-let activeElem;
-let relatedDOMList;
-
-class GridUtils {
+class Grid {
     static setActive(newActiveElem) {
-        if (activeElem)
-            activeElem.gridElement.classList.remove("hovered", "selected");
-        if (relatedDOMList)
-            relatedDOMList.forEach(e => e.classList.remove("related"));
+        this.removeOldActiveElem();
+        this.activeElem = newActiveElem;
+        this.setDetailContent();
+        this.showRelated();
+    }
 
-        activeElem = newActiveElem;
+    static removeOldActiveElem() {
+        if (this.activeElem)
+            this.activeElem.gridElement.classList.remove("hovered", "selected");
+        if (this.relatedDOMList)
+            this.relatedDOMList.forEach(e => e.classList.remove("related"));
+    }
 
-        detailTitleDOM.innerText = activeElem.getTitle();
+    static setDetailContent() {
+        detailTitleDOM.innerText = this.activeElem.getTitle();
+
+        if (!this.activeElem.detailDOM) this.activeElem.detailDOM = this.activeElem.getDetailElement();
         detailContentDOM.innerHTML = '';
+        detailContentDOM.appendChild(this.activeElem.detailDOM);
+    }
 
+    static showRelated() {
+        this.relatedDOMList = this.activeElem.getRelatedDOMList();
+        this.relatedDOMList.forEach(e => e.classList.add("related"));
+    }
 
-        if (!activeElem.detailDOM) activeElem.detailDOM = activeElem.getDetailElement();
-        detailContentDOM.appendChild(activeElem.detailDOM);
+    static setHovered() {
+        this.activeElem.gridElement.classList.add("hovered");
+    }
 
-        relatedDOMList = activeElem.getRelatedDOMList();
-        relatedDOMList.forEach(e => e.classList.add("related"));
+    static setClicked() {
+        this.activeElem.gridElement.classList.add("selected");
+        
     }
 }
 
@@ -69,14 +83,18 @@ class GridItem {
 
         this.gridElement.onmouseover = () => {
             if (!enableHover) return;
-            GridUtils.setActive(this);
-            activeElem.gridElement.classList.add("hovered");
+            Grid.setActive(this);
+            Grid.setHovered();
         };
 
         this.gridElement.onclick = () => {
             enableHover = !enableHover;
-            GridUtils.setActive(this);
-            activeElem.gridElement.classList.add(enableHover ? "hovered" : "selected");
+            Grid.setActive(this);
+
+            if (enableHover)
+                Grid.setHovered();
+            else
+                Grid.setClicked();
         };
 
         return this.gridElement;

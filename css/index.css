@@ -1,5 +1,7 @@
 body {
     font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
 pre {
@@ -26,18 +28,30 @@ pre {
 }
 
 @media screen and (min-width: 640px) {
-    #content {
+    body {
+        margin: 8px;
+        height: calc(100vh - 16px);
+        overflow: hidden;
+    }
+
+    #image-viewer {
         display: flex;
     }
 
-    #content > div {
+    /* Fit in full height */
+    .column {
         padding: 0.5em;
+        height: calc(100% - 1em);
+        display: flex;
+        flex-direction: column;
     }
 
-    #grid {
-        flex: 55%;
+    .column > .content {
+        height: 100%;
+        overflow: auto;
     }
 
+    /* Layout for left, middle, and right */
     #detail {
         flex: 30%;
     }
@@ -46,11 +60,20 @@ pre {
         min-width: 12rem;
     }
 
-    .column > .content {
-        max-height: 90vh;
-        overflow: auto;
+    #grid {
+        flex: 55%;
+        display: flex;
     }
 
-    #block-container {
+    /* scroll for block grid */
+    #block-grid {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #block-grid > .content {
+        height: 100%;
+        overflow: scroll;
     }
 }

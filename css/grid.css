@@ -19,7 +19,6 @@
 }
 
 .grid-container > div.selected {
-    box-shadow: 0 0 5px black;
     font-weight: bold;
     border-color: black;
     z-index: 0;
