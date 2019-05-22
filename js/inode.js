@@ -1,18 +1,13 @@
 let inodeList;
 
 class InodeUtils {
-    static render() {
-        Elements.inodeContainer.innerHTML = "";
-        inodeList.forEach(e => Elements.inodeContainer.appendChild(e.getGridElement()));
-    }
-
     static init() {
         inodeList = Array.from(new Array(superBlock.ninodes).keys(), i => new Inode(i));
     }
 
-    static getTypeName(type) {
-        if (type > 3) return "Unknown";
-        return ["Unused", "Directory", "File", "Device"][type];
+    static render() {
+        Elements.inodeContainer.innerHTML = "";
+        inodeList.forEach(e => Elements.inodeContainer.appendChild(e.getGridElement()));
     }
 }
 
@@ -30,7 +25,7 @@ class Inode extends GridItem {
         this.nlink = this.inode.getUint16(6, true);
         this.size = this.inode.getUint32(8, true);
 
-        this.typeName = InodeUtils.getTypeName(this.type);
+        this.typeName = this.getTypeName();
         this.gridText = this.getGridText();
         this.pathList = [];
         this.fileTreeDOMList = [];
@@ -69,6 +64,11 @@ class Inode extends GridItem {
             this.directoryList = Object.assign({}, ...this.dataBlocks.map(block => block.getEntries()));
         } else if (this.dataBlocks.every(e => e.isBlockAscii()))
             this.dataBlocks.forEach(e => e.belongsToTextFile = true);
+    }
+
+    getTypeName() {
+        if (this.type > 3) return "Unknown";
+        return ["Unused", "Directory", "File", "Device"][this.type];
     }
 
     getGridText() {
