@@ -11,9 +11,9 @@
 }
 
 #block-container > .bitmap-block {
-    background-color: #f44336;
+    background-color: orangered;
 }
 
 #block-container > .data-block {
-    background-color: #03a9f4;
+    background-color: cornflowerblue;
 }

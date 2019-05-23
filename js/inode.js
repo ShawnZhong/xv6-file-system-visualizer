@@ -7,6 +7,7 @@ class InodeUtils {
 
     static render() {
         Elements.inodeContainer.innerHTML = "";
+        inodeList.forEach(e => e.checkError());
         inodeList.forEach(e => Elements.inodeContainer.appendChild(e.getGridElement()));
     }
 }
@@ -62,8 +63,10 @@ class Inode extends GridItem {
         if (this.type === 1) {
             this.dataBlocks.forEach(e => e.isDirectoryBlock = true);
             this.directoryList = Object.assign({}, ...this.dataBlocks.map(block => block.getEntries()));
-        } else if (this.dataBlocks.every(e => e.isBlockAscii()))
+        } else if (this.dataBlocks.every(e => e.isBlockAscii())) {
             this.dataBlocks.forEach(e => e.belongsToTextFile = true);
+        }
+
     }
 
     getTypeName() {
@@ -76,14 +79,27 @@ class Inode extends GridItem {
         return ["-", "D", "F", "H"][this.type];
     }
 
+    getClassName() {
+        return this.typeName.toLowerCase() + "-inode";
+    }
+
+    checkError() {
+        if (this.type > 3)
+            return "Invalid inode type.";
+        if (this.type === 0 && this.pathList.length !== 0)
+            return "Inode referred to in directory but marked free.";
+        if (this.type !== 0 && this.pathList.length === 0)
+            return "Inode marked use but not found in a directory.";
+    }
+
     getDetailElement() {
         if (this.detailElement) return this.detailElement;
 
-
         this.detailElement = document.createElement("div");
 
+        this.detailElement.appendChild(this.getErrorElement());
 
-        //title
+        // title
         const title = document.createElement("h4");
         title.innerText = `Basic information: `;
         this.detailElement.appendChild(title);
@@ -101,14 +117,14 @@ class Inode extends GridItem {
         }
 
         // size
-        if (this.type === 1 || this.type === 2) {
+        if (this.size !== 0 || this.type !== 0) {
             const size = document.createElement("p");
             size.innerText = "Size: " + this.size;
             this.detailElement.appendChild(size);
         }
 
         // nlink
-        if (this.type !== 0) {
+        if (this.nlink !== 0 || this.type !== 0) {
             const nlink = document.createElement("p");
             nlink.innerText = "Number of links: " + this.nlink;
             this.detailElement.appendChild(nlink);
@@ -157,10 +173,6 @@ class Inode extends GridItem {
         }
 
         return this.detailElement;
-    }
-
-    getClassName() {
-        return this.typeName.toLowerCase() + "-inode";
     }
 
     getRelatedDOMList() {

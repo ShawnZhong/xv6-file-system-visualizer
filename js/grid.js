@@ -53,34 +53,25 @@ class Grid {
 }
 
 class GridItem {
-    constructor() {
-        this.gridText = '-';
-    }
-
-
-    /**
-     * @returns {string}
-     */
     getTitle() {
     }
 
-    /**
-     * @return  {string}
-     */
     getClassName() {
     }
 
-    /**
-     * @returns {HTMLBaseElement[]}
-     */
     getRelatedDOMList() {
         return [];
     }
 
-    /**
-     * @returns {HTMLBaseElement}
-     */
     getDetailElement() {
+    }
+
+    checkError() {
+        return false;
+    }
+
+    getGridText() {
+        return '-';
     }
 
 
@@ -89,8 +80,15 @@ class GridItem {
 
         this.gridElement = document.createElement("div");
 
-        this.gridElement.classList.add(this.getClassName());
-        this.gridElement.innerHTML = this.gridText;
+        this.error = this.checkError();
+
+        if (this.error) {
+            this.gridElement.classList.add("error");
+            this.gridElement.innerHTML = "?";
+        } else {
+            this.gridElement.classList.add(this.getClassName());
+            this.gridElement.innerHTML = this.getGridText();
+        }
 
         this.gridElement.onmouseover = (e) => {
             if (!Grid.enableHover) return;
@@ -113,5 +111,21 @@ class GridItem {
         };
 
         return this.gridElement;
+    }
+
+    getErrorElement() {
+        const node = document.createElement("div");
+
+        if (!this.error) return node;
+
+        const errorTitle = document.createElement("h4");
+        errorTitle.innerText = `Error: `;
+        node.appendChild(errorTitle);
+
+        const error = document.createElement("p");
+        error.innerText = this.error;
+        node.appendChild(error);
+
+        return node;
     }
 }

@@ -10,10 +10,7 @@
     background-color: #4caf50;
 }
 
-#inode-container > .unknown-inode {
-    background-color: orangered;
+#inode-container > .device-inode {
+    background-color: violet;
 }
 
-#inode-container > .device-inode {
-    background-color: indianred;
-}

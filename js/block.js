@@ -50,9 +50,13 @@ class Block extends GridItem {
 
     getDetailElement() {
         if (this.detailElement) return this.detailElement;
+
         this.detailElement = document.createElement("div");
+
+        this.detailElement.appendChild(this.getErrorElement());
         this.detailElement.appendChild(this.getSummaryDOM());
         this.detailElement.appendChild(this.getDataElement());
+
         return this.detailElement;
     }
 
@@ -82,6 +86,10 @@ class Block extends GridItem {
     getTitle() {
         return `Block ${this.blockNumber}: ${this.type}`;
     }
+
+    isBlockAscii() {
+        return false;
+    }
 }
 
 
@@ -95,7 +103,6 @@ class SuperBlock extends Block {
         this.ninodeblocks = this.ninodes * Config.inodeSize / Config.blockSize;
 
         this.type = "Super Block";
-        this.gridText = 'S';
     }
 
 
@@ -122,13 +129,16 @@ class SuperBlock extends Block {
 
         return node;
     }
+
+    getGridText() {
+        return 'S';
+    }
 }
 
 class BitmapBlock extends Block {
     constructor(blockNumber) {
         super(blockNumber);
         this.type = "Bitmap Block";
-        this.gridText = 'B';
     }
 
     getSummaryDOM() {
@@ -146,6 +156,10 @@ class BitmapBlock extends Block {
             .join(", \t");
 
         return this.dataElement;
+    }
+
+    getGridText() {
+        return 'B';
     }
 }
 
@@ -245,6 +259,20 @@ class DataBlock extends Block {
     getRelatedDOMList() {
         return this.inode ? [this.inode.gridElement, ...this.inode.getRelatedDOMList()] : [];
     }
+
+    checkError() {
+        if (!this.inode && !(this instanceof UnusedBlock)) {
+            return "Bitmap marks block in use but it is not in use."
+        }
+
+        if (this.inode && this instanceof UnusedBlock) {
+            return "Block used by inode but marked free in bitmap."
+        }
+    }
+
+    getGridText() {
+        return 'D';
+    }
 }
 
 
@@ -252,7 +280,6 @@ class InodeBlock extends Block {
     constructor(blockNumber) {
         super(blockNumber);
         this.type = "Inode Block";
-        this.gridText = 'I';
     }
 
     getRelatedDOMList() {
@@ -261,12 +288,19 @@ class InodeBlock extends Block {
             .map(i => i + numberOfInodesPerBlock * (this.blockNumber - 2))
             .map(i => inodeList[i].gridElement);
     }
+
+    getGridText() {
+        return 'I';
+    }
 }
 
 class UnusedBlock extends DataBlock {
     constructor(blockNumber) {
         super(blockNumber);
         this.type = "Unused Block";
-        this.gridText = '-';
+    }
+
+    getGridText() {
+        return '-';
     }
 }

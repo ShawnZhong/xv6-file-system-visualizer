@@ -35,3 +35,8 @@
     font-weight: bold;
     color: black;
 }
+
+
+.grid-container > div.error {
+    background-color: #f44336;
+}
