@@ -15,16 +15,16 @@ class FileTree {
     }
 
     static traverse(parent) {
-        const directory = inodeList[parent.inum].directoryList;
-        
+        const entries = inodeList[parent.inum].entries;
+
         // make sure that "." and ".." appears first
-        if (directory["."])
-            this.entryList.push(new Entry(".", directory["."], parent));
+        if (entries["."])
+            this.entryList.push(new Entry(".", entries["."], parent));
 
-        if (directory[".."])
-            this.entryList.push(new Entry("..", directory[".."], parent));
+        if (entries[".."])
+            this.entryList.push(new Entry("..", entries[".."], parent));
 
-        for (const [name, inum] of Object.entries(directory)) {
+        for (const [name, inum] of Object.entries(entries)) {
             if (name === '.' || name === '..') continue;
 
             const entry = new Entry(name, inum, parent);
@@ -54,6 +54,8 @@ class Entry {
 
         if (name !== '.' && name !== '..')
             this.inode.pathList.push(this.path);
+
+        this.inode.accessibleFromRoot = true;
     }
 
     getElement() {

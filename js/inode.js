@@ -7,7 +7,6 @@ class InodeUtils {
 
     static render() {
         Elements.inodeContainer.innerHTML = "";
-        inodeList.forEach(e => e.checkError());
         inodeList.forEach(e => Elements.inodeContainer.appendChild(e.getGridElement()));
     }
 }
@@ -29,6 +28,7 @@ class Inode extends GridItem {
         this.typeName = this.getTypeName();
         this.pathList = [];
         this.fileTreeDOMList = [];
+        this.accessibleFromRoot = false;
 
 
         // init addresses
@@ -61,7 +61,7 @@ class Inode extends GridItem {
 
         if (this.type === 1) {
             this.dataBlocks.forEach(e => e.isDirectoryBlock = true);
-            this.directoryList = Object.assign({}, ...this.dataBlocks.map(block => block.getEntries()));
+            this.entries = Object.assign({}, ...this.dataBlocks.map(block => block.getEntries()));
         } else if (this.dataBlocks.every(e => e.isBlockAscii())) {
             this.dataBlocks.forEach(e => e.belongsToTextFile = true);
         }
@@ -85,6 +85,8 @@ class Inode extends GridItem {
     checkError() {
         if (this.type > 3)
             return "Invalid inode type.";
+        if (this.type === 1 && !this.accessibleFromRoot)
+            return "Inaccessible directory.";
         if (this.type === 0 && this.pathList.length !== 0)
             return "Inode referred to in directory but marked free.";
         if (this.type !== 0 && this.pathList.length === 0)
