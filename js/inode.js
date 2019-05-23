@@ -27,7 +27,6 @@ class Inode extends GridItem {
         this.size = this.inode.getUint32(8, true);
 
         this.typeName = this.getTypeName();
-        this.gridText = this.getGridText();
         this.pathList = [];
         this.fileTreeDOMList = [];
 

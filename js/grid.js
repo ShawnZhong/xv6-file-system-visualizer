@@ -80,8 +80,8 @@ class GridItem {
 
         this.gridElement = document.createElement("div");
 
+        // error checking
         this.error = this.checkError();
-
         if (this.error) {
             this.gridElement.classList.add("error");
             this.gridElement.innerHTML = "?";
@@ -90,6 +90,7 @@ class GridItem {
             this.gridElement.innerHTML = this.getGridText();
         }
 
+        // set mouse over event
         this.gridElement.onmouseover = (e) => {
             if (!Grid.enableHover) return;
             Grid.setActive(this);
@@ -98,6 +99,8 @@ class GridItem {
             if (e) e.stopPropagation();
         };
 
+
+        // set mouse click event
         this.gridElement.onclick = (e) => {
             Grid.enableHover = !Grid.enableHover;
             Grid.setActive(this);

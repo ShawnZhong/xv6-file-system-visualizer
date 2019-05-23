@@ -54,13 +54,13 @@ class Block extends GridItem {
         this.detailElement = document.createElement("div");
 
         this.detailElement.appendChild(this.getErrorElement());
-        this.detailElement.appendChild(this.getSummaryDOM());
+        this.detailElement.appendChild(this.getSummaryElement());
         this.detailElement.appendChild(this.getDataElement());
 
         return this.detailElement;
     }
 
-    getSummaryDOM() {
+    getSummaryElement() {
         const title = document.createElement("h4");
         title.innerText = "Contents in hexadecimal: ";
         return title;
@@ -68,7 +68,8 @@ class Block extends GridItem {
 
     getDataElement() {
         if (this.dataElement) return this.dataElement;
-        return this.getHexDataElement();
+        this.dataElement = this.getHexDataElement();
+        return this.dataElement;
     }
 
     getHexDataElement() {
@@ -106,7 +107,7 @@ class SuperBlock extends Block {
     }
 
 
-    getSummaryDOM() {
+    getSummaryElement() {
         const node = document.createElement("div");
 
         const title = document.createElement("h4");
@@ -125,7 +126,7 @@ class SuperBlock extends Block {
         ninodes.innerText = "Number of inodes: " + this.ninodes;
         node.appendChild(ninodes);
 
-        node.appendChild(super.getSummaryDOM());
+        node.appendChild(super.getSummaryElement());
 
         return node;
     }
@@ -141,7 +142,7 @@ class BitmapBlock extends Block {
         this.type = "Bitmap Block";
     }
 
-    getSummaryDOM() {
+    getSummaryElement() {
         const title = document.createElement("h4");
         title.innerText = "Contents in binary: ";
         return title;
@@ -179,7 +180,7 @@ class DataBlock extends Block {
         return this.uint8Array.every(e => e < 128);
     }
 
-    getSummaryDOM() {
+    getSummaryElement() {
         const node = document.createElement("div");
 
         if (this.inode) {
@@ -210,31 +211,40 @@ class DataBlock extends Block {
             content.innerText = "Contents: ";
             node.appendChild(content);
         } else {
-            node.appendChild(super.getSummaryDOM());
+            node.appendChild(super.getSummaryElement());
         }
 
         return node;
     }
 
     getDataElement() {
-        if (this.dataElement) return this.dataElement;
+        if (this.dataElement)
+            return this.dataElement;
 
-        if (this.isDirectoryBlock)
-            return this.getEntriesDOM();
-
-        if (this.belongsToTextFile) {
-            const node = document.createElement("pre");
-            node.innerText = new TextDecoder("utf-8").decode(this.dataView).replace(/\0/g, '');
-            node.classList.add("text");
-            return node;
+        if (this.isDirectoryBlock) {
+            this.dataElement = document.createElement("pre");
+            const entries = this.getEntries();
+            this.dataElement.innerHTML = Object.entries(entries).map(([name, inum]) => `${name} → ${inum}`).join("\n");
+            return this.dataElement;
         }
 
-        return this.getHexDataElement();
+        if (this.belongsToTextFile) {
+            this.dataElement = document.createElement("pre");
+            this.dataElement.innerText = new TextDecoder("utf-8").decode(this.dataView).replace(/\0/g, '');
+            this.dataElement.classList.add("text");
+            return this.dataElement;
+        }
+
+        this.dataElement = this.getHexDataElement();
+
+        return this.dataElement;
     }
 
 
     getEntries() {
-        let entries = {};
+        if (this.entries) return this.entries;
+
+        this.entries = {};
         for (let i = 0; i < Config.blockSize / Config.entrySize; i++) {
             const inum = this.dataView.getUint16(Config.entrySize * i, true);
             if (inum === 0) continue;
@@ -243,18 +253,12 @@ class DataBlock extends Block {
             const nameArray = new Uint8Array(this.dataView.buffer, nameOffset, Config.entrySize - 2);
             const name = new TextDecoder("utf-8").decode(nameArray).replace(/\0/g, '');
 
-            entries[name] = inum;
+            this.entries[name] = inum;
         }
 
-        return entries;
+        return this.entries;
     }
 
-    getEntriesDOM() {
-        const entries = this.getEntries();
-        const node = document.createElement("pre");
-        node.innerHTML = Object.entries(entries).map(([name, inum]) => `${name} → ${inum}`).join("\n");
-        return node;
-    }
 
     getRelatedDOMList() {
         return this.inode ? [this.inode.gridElement, ...this.inode.getRelatedDOMList()] : [];
