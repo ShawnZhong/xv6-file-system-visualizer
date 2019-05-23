@@ -11,9 +11,9 @@
 }
 
 #inode-container > .unknown-inode {
-    background-color: #f44336;
+    background-color: orangered;
 }
 
 #inode-container > .device-inode {
-    background-color: #f44336;
+    background-color: indianred;
 }

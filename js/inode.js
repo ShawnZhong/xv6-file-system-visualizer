@@ -72,7 +72,7 @@ class Inode extends GridItem {
     }
 
     getGridText() {
-        if (this.type > 3) return "U";
+        if (this.type > 3) return "?";
         return ["-", "D", "F", "H"][this.type];
     }
 
