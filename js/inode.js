@@ -28,7 +28,6 @@ class Inode extends GridItem {
         this.typeName = this.getTypeName();
         this.pathList = [];
         this.fileTreeDOMList = [];
-        this.accessibleFromRoot = false;
 
 
         // init addresses
@@ -85,8 +84,6 @@ class Inode extends GridItem {
     checkError() {
         if (this.type > 3)
             return "Invalid inode type.";
-        if (this.type === 1 && !this.accessibleFromRoot)
-            return "Inaccessible directory.";
         if (this.type === 0 && this.pathList.length !== 0)
             return "Inode referred to in directory but marked free.";
         if (this.type !== 0 && this.pathList.length === 0)

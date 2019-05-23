@@ -54,8 +54,6 @@ class Entry {
 
         if (name !== '.' && name !== '..')
             this.inode.pathList.push(this.path);
-
-        this.inode.accessibleFromRoot = true;
     }
 
     getElement() {
