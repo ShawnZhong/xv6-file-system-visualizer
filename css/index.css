@@ -63,7 +63,7 @@ pre {
 
     /* Layout for left, middle, and right */
     #detail {
-        max-width: 62ch;
+        width: 62ch;
     }
 
     #file-tree {
