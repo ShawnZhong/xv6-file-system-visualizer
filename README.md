@@ -1,8 +1,6 @@
 # xv6 File System Visualizer
 
-## Summary
-
-- [This](https://shawnzhong.github.io/xv6-file-system-visualizer/) is a visualizer for xv6 file system image.
+- [This](https://shawnzhong.github.io/xv6-file-system-visualizer/) is a visualizer for xv6 file system image. The source code is published at [GitHub](https://github.com/ShawnZhong/xv6-file-system-visualizer)
 
 ## Screenshot
 
