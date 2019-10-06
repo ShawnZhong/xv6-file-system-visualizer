@@ -14,7 +14,7 @@
 
 - See the overall layout of an xv6 filesystem image
 
-- View the metadata storoed in inodes
+- View the metadata stored in inodes
 
 - Trace the relationship between files/directories, inodes, and blocks
 
