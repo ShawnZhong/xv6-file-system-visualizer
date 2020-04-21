@@ -6,6 +6,6 @@ const Config = {
 
     imagePath: "fs/",
     imageNames: [
-        "Good", "Goodlink", "Goodrefcnt", "Goodrm",
+        "Good", "Goodlink", "Goodrefcnt", "Goodrm", "Goodlarge", 
         "Repair", "Badinode", "Imrkfree", "Imrkused", "Mrkfree", "Mrkused"]
 };
